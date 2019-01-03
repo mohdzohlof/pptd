@@ -1,23 +1,64 @@
-from tkinter import Tk
+import tkinter as tk
 from PIL import ImageTk
 import MySQLdb
+
 
 assets_path = "assets/"
 
 
-def init_root():
-    root = Tk()
-    root.title("Cover page")
-    root.geometry("480x800")  # window
-    root.resizable(0, 0)
+def init_root(title="PPTD", size="480x800", resizeableHeight=False, resizeableWidth=False):
+    root = tk.Tk()
+    root.title(title)
+    root.geometry(size)
+    root.resizable(height=resizeableHeight, width=resizeableWidth)
     return root
 
 
-def init_images(path, files):
-    images = []
+def init_pages(frames):
+    pages = {}
+    for frameName, frame in frames.items():
+        pages[frameName] = {}
+        pages[frameName]["frame"] = frame
+        if frameName == "cover":
+            pages[frameName]["canvas"] = init_canvas(frame, bg="#243746")
+        else:
+            pages[frameName]["canvas"] = init_canvas(frame)
+    return pages
+
+
+def init_frame(parent, width=480, height=800):
+    return tk.Frame(parent, width=width, height=height)
+
+
+def init_frames(frameList, parent, width=480, height=800):
+    frames = {}
+    for frame in frameList:
+        frames[frame] = init_frame(parent, width, height)
+    return frames
+
+
+def init_canvas(parent, width=480, height=800, bg=None):
+    canvas = tk.Canvas(parent, width=width, height=height)
+    if bg is not None:
+        canvas.configure(bg=bg)
+    return canvas
+
+
+def init_images(files):
+    images = {}
     for file in files:
-        images.append(ImageTk.PhotoImage(file="{path}{file}".format(path=path, file=file)))
+        name = file.split(".")[0]
+        images[name] = init_image(file)
     return images
+
+
+def init_image(file):
+    file = "{}" + file
+    return ImageTk.PhotoImage(file=construct_file(file))
+
+
+def construct_file(x):
+    return x.format(assets_path)
 
 
 def init_db(db, host="localhost", user="root", passw=""):
@@ -29,3 +70,8 @@ def init_db(db, host="localhost", user="root", passw=""):
     cur = db.cursor()
 
     return db, cur
+
+
+def show_frame(current_frame, frame):
+    current_frame.pack_forget()
+    frame.pack()
