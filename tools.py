@@ -6,11 +6,11 @@ import MySQLdb
 assets_path = "assets/"
 
 
-def init_root(title="PPTD", size="480x800", resizeableHeight=False, resizeableWidth=False):
+def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable_width=False):
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
-    root.resizable(height=resizeableHeight, width=resizeableWidth)
+    root.resizable(height=resizeable_height, width=resizeable_width)
     return root
 
 
@@ -72,6 +72,7 @@ def init_db(db, host="localhost", user="root", passw=""):
     return db, cur
 
 
-def show_frame(current_frame, frame):
+def show_frame(current_frame, frame, title, root):
+    root.title(title)
     current_frame.pack_forget()
     frame.pack()
