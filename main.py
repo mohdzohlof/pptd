@@ -1,7 +1,6 @@
 import tools as t
 import tkinter as tk
 import webbrowser
-from PIL import Image, ImageTk
 
 
 def openFacebook():
@@ -9,7 +8,7 @@ def openFacebook():
 
 
 def openLinkedIn():
-        webbrowser.open_new(r"http://www.linkedin.com")
+    webbrowser.open_new(r"http://www.linkedin.com")
 
 
 def openTwitter():
@@ -29,9 +28,6 @@ imagesList = ["coverLogo.png", "emailIcon.png", "facebook.png", "homeIcon.png", 
               "rightArrow.png", "settingsIcon.png", "signupIcon.png", "toolIcon.png", "tutorialIcon.png", "twitter.png",
               "usernameIcon.png", "tutorialsTestResized.png", "back.png"]
 
-im = Image.open("assets/coverLogo2.png")
-im_resized = im.resize((216, 202))
-im = ImageTk.PhotoImage(im_resized)
 
 images = t.init_images(imagesList)
 frames = t.init_frames(framesList, root)
@@ -43,7 +39,7 @@ for name, page in pages.items():
     canvas = page["canvas"]
 
     if name == "cover":
-        button1 = tk.Button(frame, width=480, height=800, bg="#243746", image=im,
+        button1 = tk.Button(frame, width=480, height=800, bg="#243746", image=images["coverLogo"],
                             command=lambda: t.show_frame(pages["cover"]["frame"], pages["login"]["frame"],
                                                          "Login", root))
 
