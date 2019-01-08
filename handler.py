@@ -22,6 +22,19 @@ def open_twitter():
     webbrowser.open_new(r"http://www.twitter.com")
 
 
+def logout(f):
+    global user, admin
+    current_frame = f[0]
+    next_frame = f[1]
+    root_name = f[2]
+    root = f[3]
+
+    user = None
+    admin = None
+
+    show_frame(current_frame, next_frame, root_name, root)
+
+
 def login(e, p, f):
     current_frame = f[0]
     next_frame = f[1]
@@ -31,6 +44,8 @@ def login(e, p, f):
     authenticate(e, p)
 
     if user is not None:
+        e.delete(0, tk.END)
+        p.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
 
 

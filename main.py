@@ -110,8 +110,8 @@ for name, page in pages.items():
         canvas.create_text((110, 600), text='Settings', font='Times 18 bold', fill='#243746')
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.show_frame(pages["home"]["frame"], pages["login"]["frame"],
-                                                               "Login", root))  # logout button
+                                  command=lambda: h.logout((pages["home"]["frame"], pages["login"]["frame"],
+                                                               "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(430, 748, window=button_logout, height=90, width=90)  # logout button postion
 
@@ -234,8 +234,8 @@ for name, page in pages.items():
         canvas.create_window(51, 749, window=button_home_tutorials, height=90, width=90)
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.show_frame(pages["tutorials"]["frame"], pages["login"]["frame"],
-                                                               "Login", root))  # logout button
+                                  command=lambda: h.logout((pages["tutorials"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(430, 748, window=button_logout, height=90, width=90)  # logout button postion
 
@@ -251,8 +251,8 @@ for name, page in pages.items():
         canvas.create_window(51, 749, window=button_home_manual, height=90, width=90)
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.show_frame(pages["manual"]["frame"], pages["login"]["frame"],
-                                                               "Login", root))  # logout button
+                                  command=lambda: h.logout((pages["manual"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(430, 748, window=button_logout, height=90, width=90)  # logout button postion
 
@@ -268,8 +268,8 @@ for name, page in pages.items():
         canvas.create_window(51, 749, window=button_home_settings, height=90, width=90)
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.show_frame(pages["settings"]["frame"], pages["login"]["frame"],
-                                                               "Login", root))  # logout button
+                                  command=lambda: h.logout((pages["settings"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(430, 748, window=button_logout, height=90, width=90)  # logout button position
 
