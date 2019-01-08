@@ -6,7 +6,7 @@ import MySQLdb
 assets_path = "assets/"
 
 
-def init_root(title="Cover", size="480x780", resizeable_height=False, resizeable_width=False):
+def init_root(title="Cover", size="480x700", resizeable_height=False, resizeable_width=False):
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
