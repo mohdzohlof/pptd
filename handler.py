@@ -22,6 +22,12 @@ def open_twitter():
     webbrowser.open_new(r"http://www.twitter.com")
 
 
+def select_all(e):
+    widget = e.widget
+    widget.select_range(0, tk.END)
+    widget.icursor(tk.END)
+
+
 def logout(f):
     global user, admin
     current_frame = f[0]
@@ -70,6 +76,8 @@ def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable
     root.title(title)
     root.geometry(size)
     root.resizable(height=resizeable_height, width=resizeable_width)
+
+    root.bind('<Control-a>', select_all)
     return root
 
 
