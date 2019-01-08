@@ -4,6 +4,29 @@ import MySQLdb
 
 
 assets_path = "assets/"
+conn = None
+user = None
+admin = False
+
+
+def login(e, p, f):
+    pass
+
+
+def authenticate(e, p):
+    email = e.get()
+    passw = p.get()
+    global conn, user, admin
+
+    conn = init_db("pptd")
+    cur = conn.cursor()
+
+    query = "SELECT email, admin FROM account WHERE email='{}' AND password='{}'".format(email, passw)
+    cur.execute(query)
+    res = cur.fetchone()
+
+    user = res[0]
+    admin = res[1]
 
 
 def init_root(title="Cover", size="480x780", resizeable_height=False, resizeable_width=False):
@@ -62,14 +85,12 @@ def construct_file(x):
 
 
 def init_db(db, host="localhost", user="root", passw=""):
-    db = MySQLdb.connect(host=host,
+    conn = MySQLdb.connect(host=host,
                          user=user,
                          passwd=passw,
                          db=db)
 
-    cur = db.cursor()
-
-    return db, cur
+    return conn
 
 
 def show_frame(current_frame, frame, title, root):
