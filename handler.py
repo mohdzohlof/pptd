@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk
 import MySQLdb
+import webbrowser
 
 
 assets_path = "assets/"
@@ -9,8 +10,28 @@ user = None
 admin = False
 
 
+def open_facebook():
+    webbrowser.open_new(r"http://www.facebook.com")
+
+
+def open_linkedin():
+    webbrowser.open_new(r"http://www.linkedin.com")
+
+
+def open_twitter():
+    webbrowser.open_new(r"http://www.twitter.com")
+
+
 def login(e, p, f):
-    pass
+    current_frame = f[0]
+    next_frame = f[1]
+    root_name = f[2]
+    root = f[3]
+
+    authenticate(e, p)
+
+    if user is not None:
+        show_frame(current_frame, next_frame, root_name, root)
 
 
 def authenticate(e, p):
@@ -18,18 +39,18 @@ def authenticate(e, p):
     passw = p.get()
     global conn, user, admin
 
-    conn = init_db("pptd")
     cur = conn.cursor()
 
     query = "SELECT email, admin FROM account WHERE email='{}' AND password='{}'".format(email, passw)
     cur.execute(query)
     res = cur.fetchone()
+    if res is not None:
+        user = res[0]
+        if res[1] == 1:
+            admin = True
 
-    user = res[0]
-    admin = res[1]
 
-
-def init_root(title="Cover", size="480x780", resizeable_height=False, resizeable_width=False):
+def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable_width=False):
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
@@ -85,12 +106,8 @@ def construct_file(x):
 
 
 def init_db(db, host="localhost", user="root", passw=""):
-    conn = MySQLdb.connect(host=host,
-                         user=user,
-                         passwd=passw,
-                         db=db)
-
-    return conn
+    global conn
+    conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
 
 
 def show_frame(current_frame, frame, title, root):

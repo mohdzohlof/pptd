@@ -7,7 +7,6 @@ import re
 path = os.path.dirname("/home/trickster/dev/playground/flux/fluxion/")
 os.chdir(path)
 
-fr = open("/home/trickster/dev/pptd/output.txt", "r")
 fi = open("/home/trickster/dev/pptd/interfaces.txt", "w+")
 fn = open("/home/trickster/dev/pptd/networks.txt", "w+")
 p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE, encoding="utf8")
