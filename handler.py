@@ -1,6 +1,5 @@
 import tkinter as tk
 from PIL import ImageTk
-import MySQLdb
 
 
 assets_path = "assets/"
@@ -59,17 +58,6 @@ def init_image(file):
 
 def construct_file(x):
     return x.format(assets_path)
-
-
-def init_db(db, host="localhost", user="root", passw=""):
-    db = MySQLdb.connect(host=host,
-                         user=user,
-                         passwd=passw,
-                         db=db)
-
-    cur = db.cursor()
-
-    return db, cur
 
 
 def show_frame(current_frame, frame, title, root):
