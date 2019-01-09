@@ -42,8 +42,9 @@ def logout(f):
 
 
 def login(e, p, f):
-    current_frame = f[0]
-    next_frame = f[1]
+    current_frame = f[0]["frame"]
+    current_canvas = f[0]["canvas"]
+    next_frame = f[1]["frame"]
     root_name = f[2]
     root = f[3]
 
@@ -53,6 +54,9 @@ def login(e, p, f):
         e.delete(0, tk.END)
         p.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
+    else:
+        current_canvas.create_text((230, 490), anchor="n", text='Invalid username or password!', font='times 16 bold',
+                                   fill='red')  # INVALID LOGIN LABEL
 
 
 def authenticate(e, p):
