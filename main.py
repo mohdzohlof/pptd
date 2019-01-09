@@ -34,12 +34,36 @@ for name, page in pages.items():
         frame.pack()
 
     elif name == "login":
+
         canvas.create_image(240, 170, image=images["loginLogo"], anchor="center")  # Logo Image
 
         canvas.create_text((80, 350), anchor="w", text='Email:', font='times 12 bold',
                            fill='#243746')  # EMAIL LABEL
         canvas.create_text((80, 435), anchor="w", text='Password:', font='times 12 bold',
                            fill='#243746')  # PASSWORD LABEL
+
+        entry_email = tk.Entry(canvas)  # Email box
+        entry_email.focus_set()
+        canvas.create_window(80, 375, anchor="w", window=entry_email, height=30, width=300)
+
+
+        entry_password = tk.Entry(canvas, show="*")  # Password box
+        canvas.create_window(80, 460, anchor="w", window=entry_password, height=30, width=300)
+        entry_password.bind('<Return>', lambda x: button_login.invoke())
+        entry_email.bind('<Return>', lambda x: entry_password.focus_set())
+
+        button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
+                                 command=lambda: h.login(entry_email, entry_password, (
+                                 pages["login"]["frame"], pages["home"]["frame"], "Home", root)))
+        button_login.configure(width=10, height=2)
+        canvas.create_window(240, 560, window=button_login)
+
+        button_login_signup = tk.Button(canvas, text='Sign up', borderwidth=0, font='times 12 underline',
+                                        fg='#243746', command=lambda: h.show_frame(pages["login"]["frame"],
+                                                                                   pages["signup"]["frame"],
+                                                                                   "Sign up", root))
+        button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
+        canvas.create_window(240, 620, window=button_login_signup)
 
         button_fb = tk.Button(canvas, image=images["facebook"], borderwidth=0,
                               command=h.open_facebook)  # Tool button
@@ -53,26 +77,6 @@ for name, page in pages.items():
         button_twitter = tk.Button(canvas, image=images["twitter"], borderwidth=0, command=h.open_twitter)
         button_twitter.config(activebackground=defaultbg)
         canvas.create_window(367.5, 700, window=button_twitter)  # Twitter button position
-
-        button_login_signup = tk.Button(canvas, text='Sign up', borderwidth=0, font='times 12 underline',
-                                        fg='#243746', command=lambda: h.show_frame(pages["login"]["frame"],
-                                                                                   pages["signup"]["frame"],
-                                                                                   "Sign up", root))
-
-        button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
-        canvas.create_window(240, 620, window=button_login_signup)
-
-        button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
-                                 command=lambda: h.login(entry_email, entry_password, (pages["login"]["frame"], pages["home"]["frame"], "Home", root)))
-
-        button_login.configure(width=10, height=2)
-        canvas.create_window(240, 560, window=button_login)
-
-        entry_email = tk.Entry(canvas)  # Email box
-        canvas.create_window(80, 375, anchor="w", window=entry_email, height=30, width=300)
-
-        entry_password = tk.Entry(canvas, show="*")  # Password box
-        canvas.create_window(80, 460, anchor="w", window=entry_password, height=30, width=300)
 
         canvas.pack()
 
