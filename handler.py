@@ -22,6 +22,53 @@ def open_twitter():
     webbrowser.open_new(r"http://www.twitter.com")
 
 
+def has_numbers(input_string):
+    return any(char.isdigit() for char in input_string)
+
+
+def has_lower(input_string):
+    return any(char.islower() for char in input_string)
+
+
+def has_upper(input_string):
+    return any(char.isupper() for char in input_string)
+
+
+def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry_confirm_password, label, f):
+    first_name = entry_first_name.get()
+    last_name = entry_last_name.get()
+    email = entry_email.get()
+    password = entry_password.get()
+    confirm_password = entry_confirm_password.get()
+
+    current_frame = f[0]["frame"]
+    current_canvas = f[0]["canvas"]
+    next_frame = f[1]["frame"]
+    window_name = f[2]
+    root = f[3]
+
+    valid = True
+
+    if not first_name.isalpha():
+        label.configure(fg="red")
+        valid = False
+    else:
+        label.configure(fg="#4D4D4D")
+
+    if not last_name.isalpha():
+        valid = False
+    else:
+        pass
+
+    if len(password) < 10:
+        valid = False
+    elif len(password) > 25:
+        valid = False
+    elif not has_numbers(password):
+        valid = False
+    elif not has_lower(password):
+        pass
+
 def select_all(e):
     widget = e.widget
     widget.select_range(0, tk.END)
