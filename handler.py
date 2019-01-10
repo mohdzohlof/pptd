@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import ImageTk
 import MySQLdb
 import webbrowser
-
+from validate_email import validate_email
 
 assets_path = "assets/"
 conn = None
@@ -34,7 +34,7 @@ def has_upper(input_string):
     return any(char.isupper() for char in input_string)
 
 
-def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry_confirm_password, label, f):
+def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry_confirm_password, f):
     first_name = entry_first_name.get()
     last_name = entry_last_name.get()
     email = entry_email.get()
@@ -48,26 +48,23 @@ def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry
     root = f[3]
 
     valid = True
-    # EDITED
+
     if not first_name.isalpha():
-        label.configure(fg="red")
         valid = False
-    else:
-        label.configure(fg="#4D4D4D")
 
     if not last_name.isalpha():
         valid = False
-    else:
-        pass
 
-    if len(password) < 10:
+    if not (any(x.isupper() for x in password) and any(x.islower() for x in password)
+            and any(x.isdigit() for x in password) and 10 <= len(password) <= 25):
         valid = False
-    elif len(password) > 25:
+
+    if confirm_password != password:
         valid = False
-    elif not has_numbers(password):
+
+    if not validate_email(email):
         valid = False
-    elif not has_lower(password):
-        pass
+
 
 def select_all(e):
     widget = e.widget
