@@ -46,22 +46,21 @@ for name, page in pages.items():
         entry_email.focus_set()
         canvas.create_window(80, 375, anchor="w", window=entry_email, height=30, width=300)
 
-
         entry_password = tk.Entry(canvas, show="*")  # Password box
         canvas.create_window(80, 460, anchor="w", window=entry_password, height=30, width=300)
         entry_password.bind('<Return>', lambda x: button_login.invoke())
         entry_email.bind('<Return>', lambda x: entry_password.focus_set())
 
         button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
-                                 command=lambda: h.login(entry_email, entry_password, (
-                                 pages["login"]["frame"], pages["home"]["frame"], "Home", root)))
+                                 command=lambda: h.login(entry_email, entry_password,
+                                                         (pages["login"], pages["home"], "Home", root)))
         button_login.configure(width=10, height=2)
         canvas.create_window(240, 560, window=button_login)
 
         button_login_signup = tk.Button(canvas, text='Sign up', borderwidth=0, font='times 12 underline',
-                                        fg='#243746', command=lambda: h.show_frame(pages["login"]["frame"],
-                                                                                   pages["signup"]["frame"],
-                                                                                   "Sign up", root))
+                                        fg='blue', command=lambda: h.show_frame(pages["login"]["frame"],
+                                                                                pages["signup"]["frame"],
+                                                                                "Sign up", root))
         button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
         canvas.create_window(240, 620, window=button_login_signup)
 
@@ -185,7 +184,8 @@ for name, page in pages.items():
         canvas.pack()
 
     elif name == "signup":
-
+        label1 = tk.Label(canvas, text='First Name', font='times 14 bold', fg='#4D4D4D')
+        label1.place(x=110, y=250, anchor="w")
         canvas.create_image(240, 110, image=images["signupIcon"], anchor="center")
         canvas.create_image(50, 270, image=images["usernameIcon"], anchor="center")
         canvas.create_image(50, 370, image=images["usernameIcon"], anchor="center")
@@ -205,22 +205,30 @@ for name, page in pages.items():
         passwordEntry = tk.Entry(canvas, show="*")
         canvas.create_window(110, 577, window=passwordEntry, height=30, width=300, anchor="w")
 
-        repeatPasswordEntry = tk.Entry(canvas, show="*")
-        canvas.create_window(110, 677, window=repeatPasswordEntry, height=30, width=300, anchor="w")
+        confirmPasswordEntry = tk.Entry(canvas, show="")
+        canvas.create_window(110, 677, window=confirmPasswordEntry, height=30, width=300, anchor="w")
 
-        button_signup = tk.Button(canvas, text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8')
+        button_signup = tk.Button(canvas, text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8', command=lambda: h.signup(firstNameEntry, lastNameEntry, emailEntry, passwordEntry,
+                                                         confirmPasswordEntry, label1, (pages["signup"],
+                                                          pages["login"],
+                                                          "Login", root)))
         button_signup.configure(width=10, height=1)
         canvas.create_window(240, 760, window=button_signup, anchor="center")
 
-        canvas.create_text((110, 250), anchor="w", text='First Name', font='times 14 bold', fill='#4D4D4D')
         canvas.create_text((110, 350), anchor="w", text='Last Name', font='times 14 bold', fill='#4D4D4D')
         canvas.create_text((110, 450), anchor="w", text='Email', font='times 14 bold', fill='#4D4D4D')
         canvas.create_text((110, 550), anchor="w", text='Password', font='times 14 bold', fill='#4D4D4D')
         canvas.create_text((110, 650), anchor="w", text='Confirm Password', font='times 14 bold', fill='#4D4D4D')
 
+        # button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+        #                         command=lambda: h.signup(firstNameEntry, lastNameEntry, emailEntry, passwordEntry,
+        #                                                  confirmPasswordEntry, (pages["signup"]["frame"],
+        #                                                   pages["login"]["frame"],
+        #                                                   "Login", root)))
+
         button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
-                                command=lambda: h.show_frame(pages["signup"]["frame"], pages["login"]["frame"],
-                                                             "Login", root))
+                                command=lambda: h.test)
+
         button_back.config(activebackground=defaultbg)
         canvas.create_window(50, 50, window=button_back, height=90, width=90)
 
