@@ -48,7 +48,7 @@ def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry
     root = f[3]
 
     valid = True
-
+    # EDITED
     if not first_name.isalpha():
         label.configure(fg="red")
         valid = False
