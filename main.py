@@ -184,8 +184,8 @@ for name, page in pages.items():
         canvas.pack()
 
     elif name == "signup":
-        label1 = tk.Label(canvas, text='First Name', font='times 14 bold', fg='#4D4D4D')
-        label1.place(x=110, y=250, anchor="w")
+        label_error = tk.Label(canvas, font='times 12', fg='red')
+        label_error.place(x=110, y=720, anchor="w")
         canvas.create_image(240, 110, image=images["signupIcon"], anchor="center")
         canvas.create_image(50, 270, image=images["usernameIcon"], anchor="center")
         canvas.create_image(50, 370, image=images["usernameIcon"], anchor="center")
@@ -205,13 +205,15 @@ for name, page in pages.items():
         passwordEntry = tk.Entry(canvas, show="*")
         canvas.create_window(110, 577, window=passwordEntry, height=30, width=300, anchor="w")
 
-        confirmPasswordEntry = tk.Entry(canvas, show="")
+        confirmPasswordEntry = tk.Entry(canvas, show="*")
         canvas.create_window(110, 677, window=confirmPasswordEntry, height=30, width=300, anchor="w")
 
-        button_signup = tk.Button(canvas, text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8', command=lambda: h.signup(firstNameEntry, lastNameEntry, emailEntry, passwordEntry,
-                                                         confirmPasswordEntry, label1, (pages["signup"],
-                                                          pages["login"],
-                                                          "Login", root)))
+        button_signup = tk.Button(canvas,
+                                  text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8',
+                                  command=lambda: h.signup(
+                                      label_error,
+                                      (firstNameEntry, lastNameEntry, emailEntry, passwordEntry, confirmPasswordEntry),
+                                      (pages["signup"],  pages["login"], "Login", root)))
         button_signup.configure(width=10, height=1)
         canvas.create_window(240, 760, window=button_signup, anchor="center")
 

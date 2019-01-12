@@ -4,6 +4,7 @@ import MySQLdb
 import webbrowser
 from validate_email import validate_email
 
+
 assets_path = "assets/"
 conn = None
 user = None
@@ -34,36 +35,48 @@ def has_upper(input_string):
     return any(char.isupper() for char in input_string)
 
 
-def signup(entry_first_name, entry_last_name, entry_email, entry_password, entry_confirm_password, f):
-    first_name = entry_first_name.get()
-    last_name = entry_last_name.get()
-    email = entry_email.get()
-    password = entry_password.get()
-    confirm_password = entry_confirm_password.get()
+def signup(error, e, f):
+    first_name = e[0].get()
+    last_name = e[1].get()
+    email = e[2].get()
+    password = e[3].get()
+    confirm_password = e[4].get()
 
-    current_frame = f[0]["frame"]
-    current_canvas = f[0]["canvas"]
-    next_frame = f[1]["frame"]
-    window_name = f[2]
-    root = f[3]
+    global conn
+    cur = conn.cursor()
 
     valid = True
 
     if not first_name.isalpha():
+        error.configure(text="Invalid first name, must contain letters only!")
         valid = False
+        return
 
     if not last_name.isalpha():
+        error.configure(text="Invalid last name, must contain letters only!")
         valid = False
+        return
 
     if not (any(x.isupper() for x in password) and any(x.islower() for x in password)
             and any(x.isdigit() for x in password) and 10 <= len(password) <= 25):
+        error.configure(text="""Invalid password, must contain:
+        1- One capital letter
+        2- One small letter
+        3- One number""")
         valid = False
+        return
 
     if confirm_password != password:
+        error.configure(text="Passwords do not match!")
         valid = False
 
     if not validate_email(email):
+        error.configure(text="Invalid email!")
         valid = False
+
+    if valid:
+        error.configure(text="")
+        cur.execute("INSERT INTO account ")
 
 
 def select_all(e):
