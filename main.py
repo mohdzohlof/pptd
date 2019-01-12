@@ -222,14 +222,9 @@ for name, page in pages.items():
         canvas.create_text((110, 550), anchor="w", text='Password', font='times 14 bold', fill='#4D4D4D')
         canvas.create_text((110, 650), anchor="w", text='Confirm Password', font='times 14 bold', fill='#4D4D4D')
 
-        # button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
-        #                         command=lambda: h.signup(firstNameEntry, lastNameEntry, emailEntry, passwordEntry,
-        #                                                  confirmPasswordEntry, (pages["signup"]["frame"],
-        #                                                   pages["login"]["frame"],
-        #                                                   "Login", root)))
-
         button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
-                                command=lambda: h.test)
+                                command=lambda: h.show_frame(pages["signup"]["frame"], pages["login"]["frame"],
+                                                             "Login", root))
 
         button_back.config(activebackground=defaultbg)
         canvas.create_window(50, 50, window=button_back, height=90, width=90)
