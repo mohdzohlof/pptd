@@ -81,9 +81,8 @@ for name, page in pages.items():
 
     elif name == "home":
         button_tool = tk.Button(canvas, image=images["toolIcon"], borderwidth=0,
-                                command=lambda: h.show_frame(pages["home"]["frame"], pages["interfaces"]["frame"],
-                                                             "Interfaces", root))  # Tool button
-
+                                command=lambda: h.run_tool((pages["home"]["frame"], pages["interfaces"]["frame"],
+                                                            "Interfaces", root)))  # Tool button
         button_tool.config(activebackground=defaultbg)
         canvas.create_window(370, 480, window=button_tool, height=200, width=200)  # Tool button postion
         canvas.create_text((370, 600), text='Tool', font='Times 18 bold', fill='#243746')
@@ -91,7 +90,6 @@ for name, page in pages.items():
         button_tutorial = tk.Button(canvas, image=images["tutorialIcon"], borderwidth=0,
                                     command=lambda: h.show_frame(pages["home"]["frame"], pages["tutorials"]["frame"],
                                                                  "Tutorials", root))  # Tutorial button
-
         button_tutorial.config(activebackground=defaultbg)
         canvas.create_window(110, 200, window=button_tutorial, height=200, width=200)  # Tutorial button postion
         text1 = canvas.create_text((110, 320), text='Tutorials', font='Times 18 bold', fill='#243746')
@@ -99,15 +97,13 @@ for name, page in pages.items():
         button_manual = tk.Button(canvas, image=images["manualIcon"], borderwidth=0,
                                   command=lambda: h.show_frame(pages["home"]["frame"], pages["manual"]["frame"],
                                                                "Manual", root))  # manual button
-
         button_manual.config(activebackground=defaultbg)
         canvas.create_window(370, 200, window=button_manual, height=200, width=200)  # manual button postion
         canvas.create_text((370, 320), text='Manual', font='Times 18 bold', fill='#243746')
 
         button_settings = tk.Button(canvas, image=images["settingsIcon"], borderwidth=0,
-                                    command=lambda :h.show_frame(pages["home"]["frame"], pages["settings"]["frame"],
+                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["settings"]["frame"],
                                                                  "Settings", root))  # Settings button
-
         button_settings.config(activebackground=defaultbg)
         canvas.create_window(110, 480, window=button_settings, height=200, width=200)  # Settings button postion
         canvas.create_text((110, 600), text='Settings', font='Times 18 bold', fill='#243746')
@@ -130,9 +126,10 @@ for name, page in pages.items():
         button_home.config(activebackground=defaultbg)
         canvas.create_window(51, 749, window=button_home, height=90, width=90)  # HOME_Interface button postion
 
-        button_networks_scan = tk.Button(canvas, text="Networks", font='Times 20 bold', fg="#4D4D4D",
-                                           command=lambda: h.show_frame(pages["interfaces"]["frame"],
-                                                                        pages["networks"]["frame"], "Networks", root))
+
+        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
+                                           command=lambda: h.scan(entry_interface_input, (pages["interfaces"]["frame"],
+                                                                        pages["networks"]["frame"], "Networks", root)))
         button_networks_scan.configure(width=7, height=1)  # Scan
         canvas.create_window(250, 650, window=button_networks_scan)
 
@@ -145,6 +142,8 @@ for name, page in pages.items():
         for item in ["1", "2", "3"]:
             interface_output.insert(tk.END, item)
 
+
+        h.set_globals(interface=text_interface_output)
 
         canvas.pack()
 
@@ -177,6 +176,8 @@ for name, page in pages.items():
 
         for item in ["1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4","1", "2", "3", "4", "1", "2", "3", "4"]:
             networks_output.insert(tk.END, item)
+
+        h.set_globals(network=text_network_output)
 
         canvas.pack()
 
