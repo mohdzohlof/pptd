@@ -7,6 +7,7 @@ from validate_email import validate_email
 import threading
 from queue import Queue
 
+
 assets_path = "assets/"
 conn = None
 user = None

@@ -1,7 +1,7 @@
 import handler as h
 import tkinter as tk
 
-
+#test
 h.init_db("pptd")
 root = h.init_root()
 defaultbg = root.cget("bg")
@@ -117,9 +117,7 @@ for name, page in pages.items():
         canvas.pack()
 
     elif name == "interfaces":
-        canvas.create_text((240, 100), text='Interface List', font='Times 18 bold', fill='#4D4D4D')  # Interface List
-        canvas.create_text((200, 540), text='Enter the Interface NO :', font='Times 16 bold',
-                           fill='#4D4D4D')  # CHOOSE YOUR Interface
+        canvas.create_text((153, 60), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="w")
 
         button_home = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                 command=lambda: h.show_frame(pages["interfaces"]["frame"], pages["home"]["frame"],
@@ -128,55 +126,56 @@ for name, page in pages.items():
         button_home.config(activebackground=defaultbg)
         canvas.create_window(51, 749, window=button_home, height=90, width=90)  # HOME_Interface button postion
 
+
         button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
                                            command=lambda: h.scan(entry_interface_input, (pages["interfaces"]["frame"],
                                                                         pages["networks"]["frame"], "Networks", root)))
-        button_interfaces_scan.configure(width=7, height=1)  # Scan
-        canvas.create_window(250, 650, window=button_interfaces_scan)
+        button_networks_scan.configure(width=7, height=1)  # Scan
+        canvas.create_window(250, 650, window=button_networks_scan)
 
-        text_interface_output = tk.Text(canvas)  # Interface output box
-        text_interface_output.configure(state='disabled')
+        interface_output = tk.Listbox(canvas, height=30, width=40, borderwidth=0, highlightthickness=0)
+        interface_output.place(x=82, y=90)
 
-        canvas.create_window(240, 290, window=text_interface_output, height=350, width=400)
+        interface_output.insert(tk.END, "List of interfaces")
+        interface_output.insert(tk.END, "List of interfaces")
 
-        entry_interface_input = tk.Entry(canvas)  # Interface input box
-        canvas.create_window(360, 540, window=entry_interface_input, height=30, width=50)
+        for item in ["1", "2", "3"]:
+            interface_output.insert(tk.END, item)
+
 
         h.set_globals(interface=text_interface_output)
 
         canvas.pack()
 
-    elif name == "networks":
-        canvas.create_text((240, 100), text='WIFI list', font='Times 18 bold', fill='#4D4D4D')  # WIFI LIST LABEL
-        canvas.create_text((150, 540), text='Choose The Target WIFI :', font='Times 16 bold',
-                           fill='#4D4D4D')  # CHOOSE YOUR WIFI
 
-        button_network_confirm = tk.Button(canvas, text="OK", font='Times 13 bold', fg="#4D4D4D")
-        button_network_confirm.configure(width=4, height=1)  # button OK
-        canvas.create_window(380, 540, window=button_network_confirm)
+    elif name == "networks":
+        canvas.create_text((153, 60), text='Choose Network', font='Times 18 bold', fill='#4D4D4D', anchor="w")
+
+        networks_output = tk.Listbox(canvas, height=30, width=40, borderwidth=0, highlightthickness=0)
+        networks_output.place(x=82, y=90)
 
         button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                         command=lambda: h.show_frame(pages["networks"]["frame"],
-                                                                     pages["home"]["frame"],"Home",
+                                                                     pages["home"]["frame"], "Home",
                                                                      root))  # HOME_Interface button
         button_home_network.config(activebackground=defaultbg)
         canvas.create_window(51, 749, window=button_home_network, height=90,
                              width=90)  # HOME_Interface button postion
 
-        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20 bold', fg="#4D4D4D",
+        button_network_confirm = tk.Button(canvas, text="Scan", font='Times 20', fg="#4D4D4D")
+        button_network_confirm.configure(width=7, height=1)  # Confirm button size
+        canvas.create_window(250, 600, window=button_network_confirm)
+
+        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
                                           command=lambda: h.show_frame(pages["networks"]["frame"],
                                                                        pages["interfaces"]["frame"],
                                                                        "Interfaces", root))
 
-        button_network_rescan.configure(width=7, height=1)  # RESCAN
+        button_network_rescan.configure(width=7, height=1)  # Rescan button size
         canvas.create_window(250, 650, window=button_network_rescan)
 
-        text_network_output = tk.Text(canvas)  # Network output box
-        text_network_output.configure(state="disabled")
-        canvas.create_window(240, 290, window=text_network_output, height=350, width=400)
-
-        entry_network_input = tk.Entry(canvas)  # Network input box
-        canvas.create_window(310, 540, window=entry_network_input, height=30, width=50)
+        for item in ["1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4","1", "2", "3", "4", "1", "2", "3", "4"]:
+            networks_output.insert(tk.END, item)
 
         h.set_globals(network=text_network_output)
 
