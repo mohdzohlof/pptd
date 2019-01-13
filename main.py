@@ -128,10 +128,10 @@ for name, page in pages.items():
 
 
         button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
-                                           command=lambda: h.scan(entry_interface_input, (pages["interfaces"]["frame"],
+                                           command=lambda: h.scan(interface_output, (pages["interfaces"]["frame"],
                                                                         pages["networks"]["frame"], "Networks", root)))
-        button_networks_scan.configure(width=7, height=1)  # Scan
-        canvas.create_window(250, 650, window=button_networks_scan)
+        button_interfaces_scan.configure(width=7, height=1)  # Scan
+        canvas.create_window(250, 650, window=button_interfaces_scan)
 
         interface_output = tk.Listbox(canvas, height=30, width=40, borderwidth=0, highlightthickness=0)
         interface_output.place(x=82, y=90)
@@ -142,8 +142,7 @@ for name, page in pages.items():
         for item in ["1", "2", "3"]:
             interface_output.insert(tk.END, item)
 
-
-        h.set_globals(interface=text_interface_output)
+        h.set_globals(interface=interface_output)
 
         canvas.pack()
 
@@ -177,7 +176,7 @@ for name, page in pages.items():
         for item in ["1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4","1", "2", "3", "4", "1", "2", "3", "4"]:
             networks_output.insert(tk.END, item)
 
-        h.set_globals(network=text_network_output)
+        h.set_globals(network=networks_output)
 
         canvas.pack()
 
