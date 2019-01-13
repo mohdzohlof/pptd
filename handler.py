@@ -1,13 +1,19 @@
+from flux import fluxion
 import tkinter as tk
 from PIL import ImageTk
 import MySQLdb
 import webbrowser
 from validate_email import validate_email
+import threading
+from queue import Queue
 
 assets_path = "assets/"
 conn = None
 user = None
+interfaces = None
+networks = None
 admin = False
+q = Queue()
 
 
 def open_facebook():
@@ -22,7 +28,7 @@ def open_twitter():
     webbrowser.open_new(r"http://www.twitter.com")
 
 
-def has_numbers(input_string):
+def has_digit(input_string):
     return any(char.isdigit() for char in input_string)
 
 
@@ -32,6 +38,50 @@ def has_lower(input_string):
 
 def has_upper(input_string):
     return any(char.isupper() for char in input_string)
+
+
+def set_globals(connection=None, username=None, interface=None, network=None, access=None):
+    global conn, user, interfaces, networks, admin
+
+    if connection is not None:
+        conn = connection
+
+    if username is not None:
+        user = username
+
+    if interface is not None:
+        interfaces = interface
+
+    if network is not None:
+        networks = network
+
+    if access is not None:
+        admin = access
+
+
+def scan(interface_input, f):
+    q.put(interface_input)
+
+    current_frame = f[0]
+    next_frame = f[1]
+    window_name = f[2]
+    root = f[3]
+
+    show_frame(current_frame, next_frame, window_name, root)
+
+
+def run_tool(f):
+    global interfaces, networks
+    current_frame = f[0]
+    next_frame = f[1]
+    window_name = f[2]
+    root = f[3]
+    t = threading.Thread(target=fluxion, args=(q,))
+    t.start()
+    q.put(interfaces)
+    q.put(networks)
+
+    show_frame(current_frame, next_frame, window_name, root)
 
 
 def signup(error, e, f):
@@ -45,7 +95,6 @@ def signup(error, e, f):
     confirm_password = e[4].get()
 
     current_frame = f[0]["frame"]
-    current_canvas = f[0]["canvas"]
     next_frame = f[1]["frame"]
     window_name = f[2]
     root = f[3]
@@ -67,8 +116,7 @@ def signup(error, e, f):
         valid = False
         return
 
-    if not (any(x.isupper() for x in password) and any(x.islower() for x in password)
-            and any(x.isdigit() for x in password) and 10 <= len(password) <= 25):
+    if not (has_upper(password) and has_lower(password) and has_digit(password) and 10 <= len(password) <= 25):
         error.configure(text="""Invalid password, must contain:
         1- One upper case letter
         2- One upper case letter
