@@ -7,8 +7,8 @@ import time
 
 
 def fluxion(q):
-    interface_text = q.get()
-    network_text = q.get()
+    interface_listbox = q.get()
+    network_listbox = q.get()
 
     path = os.path.dirname("fluxion/")
     os.chdir(path)
@@ -50,19 +50,15 @@ def fluxion(q):
             p.stdin.flush()
 
         # Select interface
+
         if "pptd_interface_end" in line:
-            # TODO: send interface list to frontend
-            # TODO: get user input from frontend
-            # TODO: validate user input
-            # TODO: forward validated input to subprocess
-            interface_text.configure(state='normal')
             for x in fir.readlines():
-                interface_text.insert("end", x.lstrip(" "))
-            interface_text.configure(state='disabled')
+                output_line = " ".join(x.split())
+                interface_listbox.insert("end", output_line)
             interface_input = q.get()
-            input = interface_input.get()
+            interface_input = interface_input + 1
             interface = False
-            p.stdin.write('{}\n'.format(input))
+            p.stdin.write('{}\n'.format(interface_input))
             p.stdin.flush()
 
         # Select channel
@@ -72,12 +68,13 @@ def fluxion(q):
 
         # Select network
         if "pptd_network_end" in line:
-            # TODO: send networks list to frontend
-            # TODO: get user input from frontend
-            # TODO: validate user input
-            # TODO: forward validated input to subprocess
+            for x in fnr.readlines():
+                output_line = " ".join(x.split())
+                network_listbox.insert("end", output_line)
+            network_input = q.get()
+            network_input = network_input + 1
             network = False
-            p.stdin.write('1\n')
+            p.stdin.write('{}\n'.format(network_input))
             p.stdin.flush()
 
         # Select attack option

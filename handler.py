@@ -60,13 +60,19 @@ def set_globals(connection=None, username=None, interface=None, network=None, ac
         admin = access
 
 
-def scan(interface_input, f):
-    q.put(interface_input)
+def start_attack(network_listbox):
+    selected = network_listbox.curselection()[0]
+    q.put(selected)
 
+
+def scan(interface_listbox, f):
     current_frame = f[0]
     next_frame = f[1]
     window_name = f[2]
     root = f[3]
+
+    selected = interface_listbox.curselection()[0]
+    q.put(selected)
 
     show_frame(current_frame, next_frame, window_name, root)
 

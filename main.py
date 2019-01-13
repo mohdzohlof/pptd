@@ -126,7 +126,6 @@ for name, page in pages.items():
         button_home.config(activebackground=defaultbg)
         canvas.create_window(51, 749, window=button_home, height=90, width=90)  # HOME_Interface button postion
 
-
         button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
                                            command=lambda: h.scan(interface_output, (pages["interfaces"]["frame"],
                                                                         pages["networks"]["frame"], "Networks", root)))
@@ -136,16 +135,9 @@ for name, page in pages.items():
         interface_output = tk.Listbox(canvas, height=30, width=40, borderwidth=0, highlightthickness=0)
         interface_output.place(x=82, y=90)
 
-        interface_output.insert(tk.END, "List of interfaces")
-        interface_output.insert(tk.END, "List of interfaces")
-
-        for item in ["1", "2", "3"]:
-            interface_output.insert(tk.END, item)
-
         h.set_globals(interface=interface_output)
 
         canvas.pack()
-
 
     elif name == "networks":
         canvas.create_text((153, 60), text='Choose Network', font='Times 18 bold', fill='#4D4D4D', anchor="w")
@@ -161,7 +153,7 @@ for name, page in pages.items():
         canvas.create_window(51, 749, window=button_home_network, height=90,
                              width=90)  # HOME_Interface button postion
 
-        button_network_confirm = tk.Button(canvas, text="Scan", font='Times 20', fg="#4D4D4D")
+        button_network_confirm = tk.Button(canvas, text="Attack!", font='Times 20', fg="#4D4D4D", command=lambda: h.start_attack(networks_output))
         button_network_confirm.configure(width=7, height=1)  # Confirm button size
         canvas.create_window(250, 600, window=button_network_confirm)
 
@@ -172,9 +164,6 @@ for name, page in pages.items():
 
         button_network_rescan.configure(width=7, height=1)  # Rescan button size
         canvas.create_window(250, 650, window=button_network_rescan)
-
-        for item in ["1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4", "1", "2", "3", "4","1", "2", "3", "4", "1", "2", "3", "4"]:
-            networks_output.insert(tk.END, item)
 
         h.set_globals(network=networks_output)
 
