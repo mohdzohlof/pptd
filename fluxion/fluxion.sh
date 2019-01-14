@@ -1248,7 +1248,8 @@ function certssl {
                         echo "                                       "
                         echo -e "      "$red"["$yellow"1"$red"]"$grey" Create a SSL certificate"
                         echo -e "      "$red"["$yellow"2"$red"]"$transparent" Search for SSL certificate" # hop to certssl check again
-                        echo -e "      "$red"["$yellow"3"$red"]"$red" Exit" $transparent
+                        echo -e "      "$red"["$yellow"3"$red"]"$red"Exit" $transparent
+                        echo -e "pptd_certificate"
                         echo " "
                         echo -n '      #> '
                         read yn
@@ -1275,6 +1276,7 @@ function certssl {
                         echo -e "      "$red"["$yellow"1"$red"]"$grey" Create  a SSL certificate"
                         echo -e "      "$red"["$yellow"2"$red"]"$transparent" Search for SSl certificate" # hop to certssl check again
                         echo -e "      "$red"["$yellow"3"$red"]"$red" Exit" $transparent
+                        echo -e "pptd_certificate"
                         echo " "
                         echo -n '      #> '
                         read yn
@@ -1319,6 +1321,7 @@ function webinterface {
                         echo
                         echo -e "      "$red"["$yellow"1"$red"]"$grey" Web Interface"
                         echo -e "      "$red"["$yellow"2"$red"]"$transparent" \e[1;31mExit"$transparent""
+                        echo -e "pptd_attack_strategy"
                         echo
                         echo -n "#? "
                         read yn
@@ -1392,6 +1395,7 @@ function ConnectionRESET {
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent"\e[1;31m $general_back"$transparent""
                         echo
                         echo -n "#? "
+                        echo -e "pptd_login_page"
                         read webconf
 
                         if [ "$webconf" = "1" ]; then
@@ -1825,6 +1829,8 @@ function ConnectionRESET {
                                 conditional_clear
                                 webinterface
                                 break
+
+
       fi
 
         done

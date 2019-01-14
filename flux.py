@@ -10,7 +10,7 @@ def fluxion(q):
     interface_listbox = q.get()
     network_listbox = q.get()
 
-    path = os.path.dirname("fluxion/")
+    path = os.path.dirname("/home/trickster/dev/pptd/fluxion/")
     os.chdir(path)
 
     fi = open("../interfaces.txt", "w+")
@@ -26,7 +26,7 @@ def fluxion(q):
 
     for text in p.stdout:
         line = ansi_escape.sub('', text)
-        # sys.stdout.write(text)
+        sys.stdout.write(text)
 
         if "pptd_interface_start" in line:
             interface = True
@@ -107,3 +107,17 @@ def fluxion(q):
             p.stdin.write('1\n')  # [1] Check handshake
             p.stdin.flush()
             time.sleep(5)
+
+        # Create SSL Certificate
+        if "pptd_certificate" in line:
+            p.stdin.write('1\n')  # [1] Create a SSL certificate
+            p.stdin.flush()
+
+        # Select attack strategy
+        if "pptd_attack_strategy" in line:
+            p.stdin.write('1\n')  # [1] Web Interface
+            p.stdin.flush()
+
+        if "pptd_login_page" in line:
+            p.stdin.write('43\n')  # [43] Google
+            p.stdin.flush()
