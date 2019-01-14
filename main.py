@@ -6,7 +6,7 @@ h.init_db("pptd")
 root = h.init_root()
 defaultbg = root.cget("bg")
 
-framesList = ["cover", "login", "signup", "home", "tutorials", "manual", "settings", "interfaces", "networks"]
+framesList = ["cover", "login", "signup", "home", "tutorials", "manual", "settings", "interfaces", "networks", "webpages"]
 
 imagesList = ["coverLogo.png", "emailIcon.png", "facebook.png", "homeIcon.png", "leftArrow.png", "linkedin.png",
               "loginLogo.png", "logoutIcon.png", "manualIcon.png", "passwordIcon.png", "confirmPasswordIcon.png",
@@ -109,8 +109,8 @@ for name, page in pages.items():
         canvas.create_text((110, 600), text='Settings', font='Times 18 bold', fill='#243746')
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.logout((pages["home"]["frame"], pages["login"]["frame"],
-                                                               "Login", root)))  # logout button
+                                  command=lambda: h.logout((pages["home"]["frame"], pages["webpages"]["frame"],
+                                                               "webpages", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(430, 748, window=button_logout, height=90, width=90)  # logout button postion
 
@@ -270,5 +270,14 @@ for name, page in pages.items():
 
         canvas.pack()
 
+    elif name == "webpages":
+        canvas.create_text(130, 50, text="Enter the Web Page ", anchor="nw",  font='Arial 18 bold', fill='#243746')
+        web_pages_output = tk.Listbox(canvas, height=30, width=40, borderwidth=0, highlightthickness=0)
+        web_pages_output.place(x=82, y=90)
 
+        h.set_globals(interface=web_pages_output)
+        button_web = tk.Button(canvas, text="ATTACK !", borderwidth=1,
+                               )  # logout button
+        canvas.create_window(240, 720, window=button_web, height=50, width=90)  # logout button position
+        canvas.pack()
 root.mainloop()
