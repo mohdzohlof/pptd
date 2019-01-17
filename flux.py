@@ -1,14 +1,16 @@
-import handler as h
+import signal
 from subprocess import Popen, PIPE
 import os
 import sys
 import re
 import time
+import psutil
 
 
 def fluxion(q):
     interface_listbox = q.get()
     network_listbox = q.get()
+    webpage_listbox = q.get()
 
     path = os.path.dirname("/home/trickster/dev/pptd/fluxion/")
     os.chdir(path)
@@ -17,10 +19,13 @@ def fluxion(q):
     fir = open("../interfaces.txt", "r")
     fn = open("../networks.txt", "w+")
     fnr = open("../networks.txt", "r")
+    fw = open("../webpages.txt", "w+")
+    fwr = open("../webpages.txt", "r")
     p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE, encoding="utf8")
 
     interface = False
     network = False
+    webpage = False
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -34,6 +39,9 @@ def fluxion(q):
         if "pptd_network_start" in line:
             network = True
 
+        if "pptd_webpages_start" in line:
+            webpage = True
+
         if interface:
             if not line.startswith("pptd_interface"):
                 fi.write(line)
@@ -44,26 +52,26 @@ def fluxion(q):
                 fn.write(line)
                 fn.flush()
 
-        # Select language
-        if "pptd_language" in line:
-            p.stdin.write('1\n')  # [1] English
-            p.stdin.flush()
+        if webpage:
+            if not line.startswith("pptd_webpages"):
+                fw.write(line)
+                fw.flush()
 
         # Select interface
-
         if "pptd_interface_end" in line:
+            button = q.get()
+            if button == "exit":
+                p.send_signal(signal.SIGINT)
             for x in fir.readlines():
                 output_line = " ".join(x.split())
                 interface_listbox.insert("end", output_line)
+            button.configure(state="normal")
             interface_input = q.get()
+            if interface_input == "exit":
+                sys.exit(0)
             interface_input = interface_input + 1
             interface = False
             p.stdin.write('{}\n'.format(interface_input))
-            p.stdin.flush()
-
-        # Select channel
-        if "pptd_channel" in line:
-            p.stdin.write('1\n')  # [1] All channels
             p.stdin.flush()
 
         # Select network
@@ -72,9 +80,34 @@ def fluxion(q):
                 output_line = " ".join(x.split())
                 network_listbox.insert("end", output_line)
             network_input = q.get()
+            if network_input == "exit":
+                p.send_signal(signal.SIGINT)
             network_input = network_input + 1
             network = False
             p.stdin.write('{}\n'.format(network_input))
+            p.stdin.flush()
+
+        # Select webpage
+        if "pptd_webpages_end" in line:
+            for x in fwr.readlines():
+                output_line = " ".join(x.split())
+                webpage_listbox.insert("end", output_line)
+            webpage_input = q.get()
+            if webpage_input == "exit":
+                p.send_signal(signal.SIGINT)
+            webpage_input = webpage_input + 1
+            webpage = False
+            p.stdin.write('{}\n'.format(webpage_input))
+            p.stdin.flush()
+
+        # Select language
+        if "pptd_language" in line:
+            p.stdin.write('1\n')  # [1] English
+            p.stdin.flush()
+
+        # Select channel
+        if "pptd_channel" in line:
+            p.stdin.write('1\n')  # [1] All channels
             p.stdin.flush()
 
         # Select attack option
@@ -116,8 +149,4 @@ def fluxion(q):
         # Select attack strategy
         if "pptd_attack_strategy" in line:
             p.stdin.write('1\n')  # [1] Web Interface
-            p.stdin.flush()
-
-        if "pptd_login_page" in line:
-            p.stdin.write('43\n')  # [43] Google
             p.stdin.flush()

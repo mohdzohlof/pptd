@@ -1348,6 +1348,7 @@ function ConnectionRESET {
                         echo
                         echo -e ""$red"["$yellow"2"$red"]"$transparent" $header_ConnectionRESET"
                         echo
+                        echo -e "pptd_webpages_start"
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent"  English     [ENG]  (NEUTRA)";n=`expr $n + 1`
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent"  German      [GER]  (NEUTRA)";n=`expr $n + 1`
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent"  Russian     [RUS]  (NEUTRA)";n=`expr $n + 1`
@@ -1392,10 +1393,10 @@ function ConnectionRESET {
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent" Telekom ";n=` expr $n + 1`
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent" Google";n=` expr $n + 1`
       echo -e "      "$red"["$yellow"$n"$red"]"$transparent" MOVISTAR     [ESP]";n=`expr $n + 1`
+                        echo -e "pptd_webpages_end"
                         echo -e "      "$red"["$yellow"$n"$red"]"$transparent"\e[1;31m $general_back"$transparent""
                         echo
                         echo -n "#? "
-                        echo -e "pptd_login_page"
                         read webconf
 
                         if [ "$webconf" = "1" ]; then

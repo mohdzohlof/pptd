@@ -13,6 +13,7 @@ conn = None
 user = None
 interfaces = None
 networks = None
+webpages = None
 admin = False
 q = Queue()
 
@@ -41,8 +42,8 @@ def has_upper(input_string):
     return any(char.isupper() for char in input_string)
 
 
-def set_globals(connection=None, username=None, interface=None, network=None, access=None):
-    global conn, user, interfaces, networks, admin
+def set_globals(connection=None, username=None, interface=None, network=None, access=None, webpage=None):
+    global conn, user, interfaces, networks, admin, webpages
 
     if connection is not None:
         conn = connection
@@ -59,22 +60,49 @@ def set_globals(connection=None, username=None, interface=None, network=None, ac
     if access is not None:
         admin = access
 
+    if webpage is not None:
+        webpages = webpage
 
-def start_attack(network_listbox):
-    selected = network_listbox.curselection()[0]
+
+def _exit(navigation):
+    current_page = navigation[0]
+    next_page = navigation[1]
+    window_name = navigation[2]
+    root = navigation[3]
+
+    q.put("exit")
+
+    show_frame(current_page, next_page, window_name, root)
+
+
+def get_webpages(f):
+    current_page = f[0]
+    next_page = f[1]
+    window_name = f[2]
+    root = f[3]
+    selected = networks.curselection()[0]
+    q.put(selected)
+
+    show_frame(current_page, next_page, window_name, root)
+
+
+def start_attack():
+    selected = webpages.curselection()[0]
     q.put(selected)
 
 
-def scan(interface_listbox, f):
+def scan(interface_listbox, label_error, f):
     current_frame = f[0]
     next_frame = f[1]
     window_name = f[2]
     root = f[3]
 
-    selected = interface_listbox.curselection()[0]
-    q.put(selected)
-
-    show_frame(current_frame, next_frame, window_name, root)
+    if len(interface_listbox.curselection()) > 0:
+        selected = interface_listbox.curselection()[0]
+        q.put(selected)
+        show_frame(current_frame, next_frame, window_name, root)
+    else:
+        label_error.configure(text="Please select an interface!")
 
 
 def run_tool(f):
@@ -87,24 +115,31 @@ def run_tool(f):
     t.start()
     q.put(interfaces)
     q.put(networks)
+    q.put(webpages)
+
+    c = next_frame.winfo_children()[0]
+    button = c.winfo_children()[1]
+    q.put(button)
 
     show_frame(current_frame, next_frame, window_name, root)
+    _exit((current_frame, next_frame, window_name, root))
+
+    print("pawfawihgawgh")
 
 
-def signup(error, e, f):
+def signup(error, entries, navigation):
     global conn
     cur = conn.cursor()
+    first_name = entries[0].get()
+    last_name = entries[1].get()
+    email = entries[2].get()
+    password = entries[3].get()
+    confirm_password = entries[4].get()
 
-    first_name = e[0].get()
-    last_name = e[1].get()
-    email = e[2].get()
-    password = e[3].get()
-    confirm_password = e[4].get()
-
-    current_frame = f[0]["frame"]
-    next_frame = f[1]["frame"]
-    window_name = f[2]
-    root = f[3]
+    current_frame = navigation[0]["frame"]
+    next_frame = navigation[1]["frame"]
+    window_name = navigation[2]
+    root = navigation[3]
 
     valid = True
 
@@ -164,27 +199,27 @@ def logout(f):
     show_frame(current_frame, next_frame, root_name, root)
 
 
-def login(e, p, f):
-    current_frame = f[0]["frame"]
-    current_canvas = f[0]["canvas"]
-    next_frame = f[1]["frame"]
-    root_name = f[2]
-    root = f[3]
+def login(email_entry, password_entry, navigation):
+    current_frame = navigation[0]["frame"]
+    current_canvas = navigation[0]["canvas"]
+    next_frame = navigation[1]["frame"]
+    root_name = navigation[2]
+    root = navigation[3]
 
-    authenticate(e, p)
+    authenticate(email_entry, password_entry)
 
     if user is not None:
-        e.delete(0, tk.END)
-        p.delete(0, tk.END)
+        email_entry.delete(0, tk.END)
+        password_entry.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
     else:
-        current_canvas.create_text((230, 490), anchor="n", text='Invalid username or password!', font='times 16 bold',
+        current_canvas.create_text((230, 490), anchor="n", text='Invalid email or password!', font='times 16 bold',
                                    fill='red')  # INVALID LOGIN LABEL
 
 
-def authenticate(e, p):
-    email = e.get()
-    passw = p.get()
+def authenticate(email_entry, password_entry):
+    email = email_entry.get()
+    passw = password_entry.get()
     global conn, user, admin
 
     cur = conn.cursor()
@@ -194,7 +229,7 @@ def authenticate(e, p):
     res = cur.fetchone()
     if res is not None:
         user = res[0]
-        if res[1] == 1:
+        if res[1] != 0:
             admin = True
 
 
@@ -264,3 +299,11 @@ def show_frame(current_frame, frame, title, root):
     root.title(title)
     current_frame.pack_forget()
     frame.pack()
+    if title == "Interfaces":
+        c = frame.winfo_children()[0]
+        label = c.winfo_children()[0]
+        button = c.winfo_children()[1]
+        label.configure(text="")
+        button.configure(state="disabled")
+
+
