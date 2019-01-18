@@ -1,8 +1,236 @@
+from flux import fluxion
 import tkinter as tk
 from PIL import ImageTk
+import MySQLdb
+import webbrowser
+from validate_email import validate_email
+import threading
+from queue import Queue
 
 
 assets_path = "assets/"
+conn = None
+user = None
+interfaces = None
+networks = None
+webpages = None
+admin = False
+q = Queue()
+
+
+def open_facebook():
+    webbrowser.open_new(r"http://www.facebook.com")
+
+
+def open_linkedin():
+    webbrowser.open_new(r"http://www.linkedin.com")
+
+
+def open_twitter():
+    webbrowser.open_new(r"http://www.twitter.com")
+
+
+def has_digit(input_string):
+    return any(char.isdigit() for char in input_string)
+
+
+def has_lower(input_string):
+    return any(char.islower() for char in input_string)
+
+
+def has_upper(input_string):
+    return any(char.isupper() for char in input_string)
+
+
+def set_globals(connection=None, username=None, interface=None, network=None, access=None, webpage=None):
+    global conn, user, interfaces, networks, admin, webpages
+
+    if connection is not None:
+        conn = connection
+
+    if username is not None:
+        user = username
+
+    if interface is not None:
+        interfaces = interface
+
+    if network is not None:
+        networks = network
+
+    if access is not None:
+        admin = access
+
+    if webpage is not None:
+        webpages = webpage
+
+
+def _exit(navigation):
+    current_page = navigation[0]
+    next_page = navigation[1]
+    window_name = navigation[2]
+    root = navigation[3]
+
+    q.put("exit")
+
+    show_frame(current_page, next_page, window_name, root)
+
+
+def get_webpages(f):
+    current_page = f[0]
+    next_page = f[1]
+    window_name = f[2]
+    root = f[3]
+    selected = networks.curselection()[0]
+    q.put(selected)
+
+    show_frame(current_page, next_page, window_name, root)
+
+
+def start_attack():
+    selected = webpages.curselection()[0]
+    q.put(selected)
+
+
+def scan(interface_listbox, label_error, f):
+    current_frame = f[0]
+    next_frame = f[1]
+    window_name = f[2]
+    root = f[3]
+
+    if len(interface_listbox.curselection()) > 0:
+        selected = interface_listbox.curselection()[0]
+        q.put(selected)
+        show_frame(current_frame, next_frame, window_name, root)
+    else:
+        label_error.configure(text="Please select an interface!")
+
+
+def run_tool(f):
+    global interfaces, networks
+    current_frame = f[0]
+    next_frame = f[1]
+    window_name = f[2]
+    root = f[3]
+    t = threading.Thread(target=fluxion, args=(q,))
+    t.start()
+    q.put(interfaces)
+    q.put(networks)
+    q.put(webpages)
+
+    c = next_frame.winfo_children()[0]
+    button = c.winfo_children()[1]
+    q.put(button)
+
+    show_frame(current_frame, next_frame, window_name, root)
+    _exit((current_frame, next_frame, window_name, root))
+
+    print("pawfawihgawgh")
+
+
+def signup(error, entries, navigation):
+    global conn
+    cur = conn.cursor()
+    first_name = entries[0].get()
+    last_name = entries[1].get()
+    email = entries[2].get()
+    password = entries[3].get()
+    confirm_password = entries[4].get()
+
+    current_frame = navigation[0]["frame"]
+    next_frame = navigation[1]["frame"]
+    window_name = navigation[2]
+    root = navigation[3]
+
+    valid = True
+
+    if not first_name.isalpha():
+        error.configure(text="Invalid first name, must contain letters only!")
+        valid = False
+        return
+
+    if not last_name.isalpha():
+        error.configure(text="Invalid last name, must contain letters only!")
+        valid = False
+        return
+
+    if not validate_email(email):
+        error.configure(text="Invalid email!")
+        valid = False
+        return
+
+    if not (has_upper(password) and has_lower(password) and has_digit(password) and 10 <= len(password) <= 25):
+        error.configure(text="""Invalid password, must contain:
+        1- One upper case letter
+        2- One upper case letter
+        3- One number""")
+        valid = False
+        return
+
+    if confirm_password != password:
+        error.configure(text="Passwords do not match!")
+        valid = False
+        return
+
+    if valid:
+        error.configure(text="")
+        query = "INSERT INTO account (email, password, admin, first_name, last_name) " \
+                "VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')"\
+            .format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
+        cur.execute(query)
+        show_frame(current_frame, next_frame, window_name, root)
+
+
+def select_all(e):
+    widget = e.widget
+    widget.select_range(0, tk.END)
+    widget.icursor(tk.END)
+
+
+def logout(f):
+    global user, admin
+    current_frame = f[0]
+    next_frame = f[1]
+    root_name = f[2]
+    root = f[3]
+
+    user = None
+    admin = None
+
+    show_frame(current_frame, next_frame, root_name, root)
+
+
+def login(email_entry, password_entry, navigation):
+    current_frame = navigation[0]["frame"]
+    current_canvas = navigation[0]["canvas"]
+    next_frame = navigation[1]["frame"]
+    root_name = navigation[2]
+    root = navigation[3]
+
+    authenticate(email_entry, password_entry)
+
+    if user is not None:
+        email_entry.delete(0, tk.END)
+        password_entry.delete(0, tk.END)
+        show_frame(current_frame, next_frame, root_name, root)
+    else:
+        current_canvas.create_text((230, 490), anchor="n", text='Invalid email or password!', font='times 16 bold',
+                                   fill='red')  # INVALID LOGIN LABEL
+
+
+def authenticate(email_entry, password_entry):
+    email = email_entry.get()
+    passw = password_entry.get()
+    global conn, user, admin
+
+    cur = conn.cursor()
+
+    query = "SELECT email, admin FROM account WHERE email='{}' AND password='{}'".format(email, passw)
+    cur.execute(query)
+    res = cur.fetchone()
+    if res is not None:
+        user = res[0]
+        if res[1] != 0:
+            admin = True
 
 
 def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable_width=False):
@@ -10,6 +238,8 @@ def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable
     root.title(title)
     root.geometry(size)
     root.resizable(height=resizeable_height, width=resizeable_width)
+
+    root.bind('<Control-a>', select_all)
     return root
 
 
@@ -60,7 +290,18 @@ def construct_file(x):
     return x.format(assets_path)
 
 
+def init_db(db, host="localhost", user="root", passw=""):
+    global conn
+    conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
+
+
 def show_frame(current_frame, frame, title, root):
     root.title(title)
     current_frame.pack_forget()
     frame.pack()
+    if title == "Interfaces":
+        c = frame.winfo_children()[0]
+        label = c.winfo_children()[0]
+        button = c.winfo_children()[1]
+        label.configure(text="")
+        button.configure(state="disabled")
