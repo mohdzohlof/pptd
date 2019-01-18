@@ -305,5 +305,3 @@ def show_frame(current_frame, frame, title, root):
         button = c.winfo_children()[1]
         label.configure(text="")
         button.configure(state="disabled")
-
-
