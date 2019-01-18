@@ -1,12 +1,11 @@
 from flux import fluxion
 import tkinter as tk
 from PIL import ImageTk
-import MySQLdb
+import mysql.connector as mariadb
 import webbrowser
 from validate_email import validate_email
 import threading
 from queue import Queue
-
 
 assets_path = "assets/"
 conn = None
@@ -292,7 +291,7 @@ def construct_file(x):
 
 def init_db(db, host="localhost", user="root", passw=""):
     global conn
-    conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
+    conn = mariadb.connect(host=host, user=user, passwd=passw, db=db)
 
 
 def show_frame(current_frame, frame, title, root):
