@@ -1,93 +1,151 @@
+import signal
 from subprocess import Popen, PIPE
 import os
 import sys
 import re
+import time
 
 
-path = os.path.dirname("/home/trickster/dev/playground/flux/fluxion/")
-os.chdir(path)
+def fluxion(q):
+    interface_listbox = q.get()
+    network_listbox = q.get()
+    webpage_listbox = q.get()
 
-fr = open("/home/trickster/dev/pptd/output.txt", "r")
-fi = open("/home/trickster/dev/pptd/interfaces.txt", "w+")
-fn = open("/home/trickster/dev/pptd/networks.txt", "w+")
-p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE, encoding="utf8")
+    path = os.path.dirname("/home/barakotii/pptd/fluxion/")
+    os.chdir(path)
 
-interface = False
-network = False
+    fi = open("../interfaces.txt", "w+")
+    fir = open("../interfaces.txt", "r")
+    fn = open("../networks.txt", "w+")
+    fnr = open("../networks.txt", "r")
+    fw = open("../webpages.txt", "w+")
+    fwr = open("../webpages.txt", "r")
+    p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE, encoding="utf8")
 
-ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+    interface = False
+    network = False
+    webpage = False
 
-for text in p.stdout:
-    line = ansi_escape.sub('', text)
-    sys.stdout.write(text)
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-    if "pptd_interface_start" in line:
-        interface = True
+    for text in p.stdout:
+        line = ansi_escape.sub('', text)
+        sys.stdout.write(text)
 
-    if "pptd_network_start" in line:
-        network = True
+        if "pptd_interface_start" in line:
+            interface = True
 
-    if interface:
-        if not line.startswith("pptd_interface"):
-            fi.write(text)
-            fi.flush()
+        if "pptd_network_start" in line:
+            network = True
 
-    if network:
-        if not line.startswith("pptd_network"):
-            fn.write(text)
-            fn.flush()
+        if "pptd_webpages_start" in line:
+            webpage = True
 
-    # Select language
-    if "pptd_language" in line:
-        p.stdin.write('1\n')  # [1] English
-        p.stdin.flush()
+        if interface:
+            if not line.startswith("pptd_interface"):
+                fi.write(line)
+                fi.flush()
 
-    # Select interface
-    if "pptd_interface_end" in line:
-        # TODO: send interface list to frontend
-        # TODO: get user input from frontend
-        # TODO: validate user input
-        # TODO: forward validated input to subprocess
-        interface = False
-        p.stdin.write('2\n')
-        p.stdin.flush()
+        if network:
+            if not line.startswith("pptd_network"):
+                fn.write(line)
+                fn.flush()
 
-    # Select channel
-    if "pptd_channel" in line:
-        p.stdin.write('1\n')  # [1] All channels
-        p.stdin.flush()
+        if webpage:
+            if not line.startswith("pptd_webpages"):
+                fw.write(line)
+                fw.flush()
 
-    # Select network
-    if "pptd_network_end" in line:
-        # TODO: send networks list to frontend
-        # TODO: get user input from frontend
-        # TODO: validate user input
-        # TODO: forward validated input to subprocess
-        network = False
-        p.stdin.write('1\n')
-        p.stdin.flush()
+        # Select interface
+        if "pptd_interface_end" in line:
+            button = q.get()
+            if button == "exit":
+                p.send_signal(signal.SIGINT)
+            for x in fir.readlines():
+                output_line = " ".join(x.split())
+                interface_listbox.insert("end", output_line)
+            button.configure(state="normal")
+            interface_input = q.get()
+            if interface_input == "exit":
+                sys.exit(0)
+            interface_input = interface_input + 1
+            interface = False
+            p.stdin.write('{}\n'.format(interface_input))
+            p.stdin.flush()
 
-    # Select attack option
-    if "pptd_attack_option" in line:
-        p.stdin.write('1\n')  # [1] FakeAP - Hostapd
-        p.stdin.flush()
+        # Select network
+        if "pptd_network_end" in line:
+            for x in fnr.readlines():
+                output_line = " ".join(x.split())
+                network_listbox.insert("end", output_line)
+            network_input = q.get()
+            if network_input == "exit":
+                p.send_signal(signal.SIGINT)
+            network_input = network_input + 1
+            network = False
+            p.stdin.write('{}\n'.format(network_input))
+            p.stdin.flush()
 
-    # Always check for new handshake
-    if "pptd_handshake_skip" in line:
-        p.stdin.write('\n')  # Press Enter to skip selecting an existing handshake
-        p.stdin.flush()
+        # Select webpage
+        if "pptd_webpages_end" in line:
+            for x in fwr.readlines():
+                output_line = " ".join(x.split())
+                webpage_listbox.insert("end", output_line)
+            webpage_input = q.get()
+            if webpage_input == "exit":
+                p.send_signal(signal.SIGINT)
+            webpage_input = webpage_input + 1
+            webpage = False
+            p.stdin.write('{}\n'.format(webpage_input))
+            p.stdin.flush()
 
-    # Handshake check
-    if "pptd_handshake_check" in line:
-        p.stdin.write('1\n')  # [1] pyrit
-        p.stdin.flush()
+        # Select language
+        if "pptd_language" in line:
+            p.stdin.write('1\n')  # [1] English
+            p.stdin.flush()
 
-    # De-authentication
-    if "pptd_deauth" in line:
-        p.stdin.write('1\n')  # [1] Deauth all
-        p.stdin.flush()
+        # Select channel
+        if "pptd_channel" in line:
+            p.stdin.write('1\n')  # [1] All channels
+            p.stdin.flush()
 
-    # Handshake status
-    if "pptd_status" in line:
-        p.stdin.write('1\n')  # [1] Check handshake
-        p.stdin.flush()
+        # Select attack option
+        if "pptd_attack_option" in line:
+            p.stdin.write('1\n')  # [1] FakeAP - Hostapd
+            p.stdin.flush()
+
+        # Do not use old handshake
+        if "pptd_handshake_found" in line:
+            p.stdin.write("N\n")
+            p.stdin.flush()
+
+        # Always check for new handshake
+        if "pptd_handshake_skip" in line:
+            p.stdin.write('\n')  # Press Enter to skip selecting an existing handshake
+            p.stdin.flush()
+
+        # Handshake check
+        if "pptd_handshake_check" in line:
+            p.stdin.write('1\n')  # [1] pyrit
+            p.stdin.flush()
+
+        # De-authentication
+        if "pptd_deauth" in line:
+            p.stdin.write('1\n')  # [1] Deauth all
+            p.stdin.flush()
+
+        # Handshake status
+        if "pptd_status" in line:
+            p.stdin.write('1\n')  # [1] Check handshake
+            p.stdin.flush()
+            time.sleep(5)
+
+        # Create SSL Certificate
+        if "pptd_certificate" in line:
+            p.stdin.write('1\n')  # [1] Create a SSL certificate
+            p.stdin.flush()
+
+        # Select attack strategy
+        if "pptd_attack_strategy" in line:
+            p.stdin.write('1\n')  # [1] Web Interface
+            p.stdin.flush()
