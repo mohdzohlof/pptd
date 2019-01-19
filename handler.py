@@ -1,7 +1,7 @@
 from flux import fluxion
 import tkinter as tk
 from PIL import ImageTk
-import mysql.connector as mariadb
+import MySQLdb
 import webbrowser
 from validate_email import validate_email
 import threading
@@ -14,7 +14,8 @@ interfaces = None
 networks = None
 webpages = None
 admin = False
-q = Queue()
+
+q = None
 
 
 def open_facebook():
@@ -105,7 +106,9 @@ def scan(interface_listbox, label_error, f):
 
 
 def run_tool(f):
-    global interfaces, networks
+    global interfaces, networks, q
+    # interfaces.delete(0, "end")
+    q = Queue()
     current_frame = f[0]
     next_frame = f[1]
     window_name = f[2]
@@ -121,9 +124,6 @@ def run_tool(f):
     q.put(button)
 
     show_frame(current_frame, next_frame, window_name, root)
-    _exit((current_frame, next_frame, window_name, root))
-
-    print("pawfawihgawgh")
 
 
 def signup(error, entries, navigation):
@@ -176,6 +176,7 @@ def signup(error, entries, navigation):
                 "VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')"\
             .format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
         cur.execute(query)
+        conn.commit()
         show_frame(current_frame, next_frame, window_name, root)
 
 
@@ -232,7 +233,7 @@ def authenticate(email_entry, password_entry):
             admin = True
 
 
-def init_root(title="Cover", size="480x720", resizeable_height=False, resizeable_width=False):
+def init_root(title="Cover", size="480x800", resizeable_height=False, resizeable_width=False):
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
@@ -291,7 +292,7 @@ def construct_file(x):
 
 def init_db(db, host="localhost", user="root", passw=""):
     global conn
-    conn = mariadb.connect(host=host, user=user, passwd=passw, db=db)
+    conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
 
 
 def show_frame(current_frame, frame, title, root):
