@@ -193,8 +193,8 @@ for name, page in pages.items():
         canvas.pack()
 
     elif name == "signup":
-        signup_label_error = tk.Label(canvas, font='times 12 bold', fg='red')
-        signup_label_error.place(x=240, y=720, anchor="center")
+        signup_label_error = tk.Label(canvas, font='times 12', fg='red')
+        signup_label_error.place(x=238, y=640, anchor="center")
         canvas.create_image(240, 100, image=images["signupIcon"], anchor="center")
         canvas.create_image(85, 230, image=images["firstNameIcon"], anchor="center")
         canvas.create_image(85, 320, image=images["lastNameIcon"], anchor="center")
@@ -238,7 +238,7 @@ for name, page in pages.items():
                                       (firstNameEntry, lastNameEntry, emailEntry, passwordEntry, confirmPasswordEntry),
                                       (pages["signup"], pages["login"], "Login", root)))
         button_signup.configure(width=10, height=2)
-        canvas.create_window(240, 670, window=button_signup, anchor="center")
+        canvas.create_window(238, 690, window=button_signup, anchor="center")
 
         canvas.pack()
 
