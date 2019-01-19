@@ -131,7 +131,7 @@ for name, page in pages.items():
         label_scanning.place(x=163, y=570)
         root.after(1, h.scanning(label_scanning, root))
 
-        interface_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
+        interface_label_error = tk.Label(canvas, font='times 12', fg='red', text="")
         interface_label_error.place(x=250, y=580, anchor="center")
 
         button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
