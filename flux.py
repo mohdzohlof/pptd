@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import time
+import io
 
 
 def fluxion(q):
@@ -11,7 +12,11 @@ def fluxion(q):
     network_listbox = q.get()
     webpage_listbox = q.get()
 
-    path = os.path.dirname("/home/barakotii/pptd/fluxion/")
+    interface_listbox.delete(0, "end")
+    network_listbox.delete(0, "end")
+    webpage_listbox.delete(0, "end")
+
+    path = os.path.dirname("/home/trickster/dev/playground/pptd/fluxion/")
     os.chdir(path)
 
     fi = open("../interfaces.txt", "w+")
@@ -20,7 +25,7 @@ def fluxion(q):
     fnr = open("../networks.txt", "r")
     fw = open("../webpages.txt", "w+")
     fwr = open("../webpages.txt", "r")
-    p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE, encoding="utf8")
+    p = Popen("./fluxion.sh", stdin=PIPE, stdout=PIPE)
 
     interface = False
     network = False
@@ -28,7 +33,7 @@ def fluxion(q):
 
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-    for text in p.stdout:
+    for text in io.TextIOWrapper(p.stdout, encoding='utf-8'):
         line = ansi_escape.sub('', text)
         sys.stdout.write(text)
 
@@ -67,10 +72,12 @@ def fluxion(q):
             button.configure(state="normal")
             interface_input = q.get()
             if interface_input == "exit":
-                sys.exit(0)
+                p.send_signal(signal.SIGINT)
+                return
             interface_input = interface_input + 1
             interface = False
-            p.stdin.write('{}\n'.format(interface_input))
+
+            p.stdin.write('{}\n'.format(interface_input).encode())
             p.stdin.flush()
 
         # Select network
@@ -83,7 +90,7 @@ def fluxion(q):
                 p.send_signal(signal.SIGINT)
             network_input = network_input + 1
             network = False
-            p.stdin.write('{}\n'.format(network_input))
+            p.stdin.write('{}\n'.format(network_input).encode())
             p.stdin.flush()
 
         # Select webpage
@@ -96,56 +103,56 @@ def fluxion(q):
                 p.send_signal(signal.SIGINT)
             webpage_input = webpage_input + 1
             webpage = False
-            p.stdin.write('{}\n'.format(webpage_input))
+            p.stdin.write('{}\n'.format(webpage_input).encode())
             p.stdin.flush()
 
         # Select language
         if "pptd_language" in line:
-            p.stdin.write('1\n')  # [1] English
+            p.stdin.write(b'1\n')  # [1] English
             p.stdin.flush()
 
         # Select channel
         if "pptd_channel" in line:
-            p.stdin.write('1\n')  # [1] All channels
+            p.stdin.write(b'1\n')  # [1] All channels
             p.stdin.flush()
 
         # Select attack option
         if "pptd_attack_option" in line:
-            p.stdin.write('1\n')  # [1] FakeAP - Hostapd
+            p.stdin.write(b'1\n')  # [1] FakeAP - Hostapd
             p.stdin.flush()
 
         # Do not use old handshake
         if "pptd_handshake_found" in line:
-            p.stdin.write("N\n")
+            p.stdin.write(b"N\n")
             p.stdin.flush()
 
         # Always check for new handshake
         if "pptd_handshake_skip" in line:
-            p.stdin.write('\n')  # Press Enter to skip selecting an existing handshake
+            p.stdin.write(b'\n')  # Press Enter to skip selecting an existing handshake
             p.stdin.flush()
 
         # Handshake check
         if "pptd_handshake_check" in line:
-            p.stdin.write('1\n')  # [1] pyrit
+            p.stdin.write(b'1\n')  # [1] pyrit
             p.stdin.flush()
 
         # De-authentication
         if "pptd_deauth" in line:
-            p.stdin.write('1\n')  # [1] Deauth all
+            p.stdin.write(b'1\n')  # [1] Deauth all
             p.stdin.flush()
 
         # Handshake status
         if "pptd_status" in line:
-            p.stdin.write('1\n')  # [1] Check handshake
+            p.stdin.write(b'1\n')  # [1] Check handshake
             p.stdin.flush()
             time.sleep(5)
 
         # Create SSL Certificate
         if "pptd_certificate" in line:
-            p.stdin.write('1\n')  # [1] Create a SSL certificate
+            p.stdin.write(b'1\n')  # [1] Create a SSL certificate
             p.stdin.flush()
 
         # Select attack strategy
         if "pptd_attack_strategy" in line:
-            p.stdin.write('1\n')  # [1] Web Interface
+            p.stdin.write(b'1\n')  # [1] Web Interface
             p.stdin.flush()
