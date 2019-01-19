@@ -7,7 +7,6 @@ from validate_email import validate_email
 import threading
 from queue import Queue
 
-
 assets_path = "assets/"
 conn = None
 user = None
@@ -15,7 +14,9 @@ interfaces = None
 networks = None
 webpages = None
 admin = False
-q = Queue()
+
+q = None
+
 
 def scanning(label, root):
 
@@ -35,6 +36,7 @@ def scanning(label, root):
 
     # After 1 second, update the status
     root.after(1000, lambda: scanning(label, root))
+
 
 def handshake_waiting(label_handshake, root):
     # Get the current message
@@ -143,7 +145,9 @@ def scan(interface_listbox, label_error, f):
 
 
 def run_tool(f):
-    global interfaces, networks
+    global interfaces, networks, q
+    # interfaces.delete(0, "end")
+    q = Queue()
     current_frame = f[0]
     next_frame = f[1]
     window_name = f[2]
@@ -159,9 +163,6 @@ def run_tool(f):
     q.put(button)
 
     show_frame(current_frame, next_frame, window_name, root)
-    _exit((current_frame, next_frame, window_name, root))
-
-    print("pawfawihgawgh")
 
 
 def signup(error, entries, navigation):
@@ -214,6 +215,7 @@ def signup(error, entries, navigation):
                 "VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')"\
             .format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
         cur.execute(query)
+        conn.commit()
         show_frame(current_frame, next_frame, window_name, root)
 
 
