@@ -17,6 +17,43 @@ webpages = None
 admin = False
 q = Queue()
 
+def scanning(label, root):
+
+    # Get the current message
+    current_status = label["text"]
+
+    # If the message is "Scanning...", start over with "Working"
+    if current_status.endswith("..."):
+        current_status = "Scanning for interfaces"
+
+    # If not, then just add a "." on the end
+    else:
+        current_status += "."
+
+    # Update the message
+    label["text"] = current_status
+
+    # After 1 second, update the status
+    root.after(1000, lambda: scanning(label, root))
+
+def handshake_waiting(label_handshake, root):
+    # Get the current message
+    current_status = label_handshake["text"]
+
+    # If the message is "Working...", start over with "Working"
+    if current_status.endswith("..."):
+        current_status = "Waiting for handshake"
+
+    # If not, then just add a "." on the end
+    else:
+        current_status += "."
+
+    # Update the message
+    label_handshake["text"] = current_status
+
+    # After 1 second, update the status
+    root.after(1000, lambda: handshake_waiting(label_handshake, root))
+
 
 def open_facebook():
     webbrowser.open_new(r"http://www.facebook.com")
@@ -233,13 +270,18 @@ def authenticate(email_entry, password_entry):
             admin = True
 
 
-def init_root(title="Cover", size="480x720", resizeable_height=False, resizeable_width=False):
+def init_root(title="Cover", size="476x730", resizeable_height=False, resizeable_width=False):
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
     root.resizable(height=resizeable_height, width=resizeable_width)
 
+    # root.overrideredirect(True)
+    # root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+    # root.focus_set()  # <-- move focus to this widget
+    # root.attributes('-zoomed', True)
     root.bind('<Control-a>', select_all)
+
     return root
 
 
