@@ -101,8 +101,8 @@ for name, page in pages.items():
         canvas.create_window(125, 440, window=button_settings, height=200, width=200)  # Settings button postion
 
         button_tool = tk.Button(canvas, image=images["toolIcon"], borderwidth=0,
-                                command=lambda: h.show_frame(pages["home"]["frame"], pages["webpages"]["frame"],
-                                                             "Interfaces", root))  # Tool button
+                                command=lambda: h.run_tool((pages["home"]["frame"], pages["interfaces"]["frame"],
+                                                            "Interfaces", root)))  # Tool button
         button_tool.config(activebackground=defaultbg)
         canvas.create_window(355, 440, window=button_tool, height=200, width=200)  # Tool button postion
 
@@ -123,13 +123,6 @@ for name, page in pages.items():
 
         canvas.create_text((153, 60), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="w")
 
-        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
-                                           command=lambda: h.scan(interface_output, interface_label_error,
-                                                                  (pages["interfaces"]["frame"],
-                                                                   pages["networks"]["frame"], "Networks", root)))
-        button_interfaces_scan.configure(width=7, height=1)  # Scan
-        canvas.create_window(238, 650, window=button_interfaces_scan)
-
         interface_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
         interface_output.place(x=82, y=90)
 
@@ -139,6 +132,13 @@ for name, page in pages.items():
 
         interface_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
         interface_label_error.place(x=250, y=580, anchor="center")
+
+        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
+                                           command=lambda: h.scan(interface_output, interface_label_error,
+                                                                  (pages["interfaces"]["frame"],
+                                                                   pages["networks"]["frame"], "Networks", root)))
+        button_interfaces_scan.configure(width=7, height=1)  # Scan
+        canvas.create_window(238, 650, window=button_interfaces_scan)
 
         button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                            command=lambda: h._exit(
@@ -161,6 +161,9 @@ for name, page in pages.items():
         label_handshake.place(x=20, y=570)
         root.after(1, h.handshake_waiting(label_handshake, root))
 
+        network_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
+        network_label_error.place(x=250, y=570, anchor="center")
+
         button_network_confirm = tk.Button(canvas, text="OK!", font='Times 20', fg="#4D4D4D", command=lambda: h.get_webpages((pages["networks"]["frame"], pages["webpages"]["frame"], "webpages", root)))
         button_network_confirm.configure(width=7, height=1)  # Confirm button size
         canvas.create_window(250, 600, window=button_network_confirm)
@@ -182,7 +185,6 @@ for name, page in pages.items():
                                                                      pages["home"]["frame"], "Home",
                                                                      root))  # HOME_Interface button
         button_home_network.config(activebackground=defaultbg)
-
         canvas.create_window(10, 720, window=button_home_network, height=90, width=90, anchor="sw")
 
         h.set_globals(network=networks_output)
