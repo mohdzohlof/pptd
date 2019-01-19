@@ -14,11 +14,15 @@ interfaces = None
 networks = None
 webpages = None
 admin = False
+interface_label_scan = None
+network_label_scan = None
 
 q = None
 
 
 def scanning(label, root):
+    global interface_label_scan
+    interface_label_scan = label
 
     # Get the current message
     current_status = label["text"]
@@ -159,8 +163,9 @@ def run_tool(f):
     q.put(webpages)
 
     c = next_frame.winfo_children()[0]
-    button = c.winfo_children()[1]
+    button = c.winfo_children()[3]
     q.put(button)
+    q.put(interface_label_scan)
 
     show_frame(current_frame, next_frame, window_name, root)
 
@@ -249,7 +254,7 @@ def login(email_entry, password_entry, navigation):
         password_entry.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
     else:
-        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 16 bold',
+        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 12',
                                    fill='red')  # INVALID LOGIN LABEL
 
 
@@ -275,10 +280,6 @@ def init_root(title="Cover", size="476x730", resizeable_height=False, resizeable
     root.geometry(size)
     root.resizable(height=resizeable_height, width=resizeable_width)
 
-    # root.overrideredirect(True)
-    # root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-    # root.focus_set()  # <-- move focus to this widget
-    # root.attributes('-zoomed', True)
     root.bind('<Control-a>', select_all)
 
     return root
@@ -342,7 +343,23 @@ def show_frame(current_frame, frame, title, root):
     frame.pack()
     if title == "Interfaces":
         c = frame.winfo_children()[0]
-        label = c.winfo_children()[0]
-        button = c.winfo_children()[1]
-        label.configure(text="")
-        button.configure(state="disabled")
+        interface_scanning_label = c.winfo_children()[1]
+        interface_error_label = c.winfo_children()[2]
+        interface_confirm_button = c.winfo_children()[3]
+        interface_scanning_label.place(x=163, y=570)
+        interface_error_label.configure(text="")
+        interface_confirm_button.configure(state="disabled")
+    elif title == "Networks":
+        c = frame.winfo_children()[0]
+        network_handshake_label = c.winfo_children()[1]
+        network_error_label = c.winfo_children()[2]
+        network_confirm_button = c.winfo_children()[3]
+        network_rescan_button = c.winfo_children()[4]
+        network_stop_handshake_button = c.winfo_children()[5]
+
+        network_handshake_label.place_forget()
+        network_error_label.configure(text="")
+        network_confirm_button.configure(state="disabled")
+        network_rescan_button.configure(state="disabled")
+        network_stop_handshake_button.configure(state="disabled")
+
