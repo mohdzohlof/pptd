@@ -197,10 +197,7 @@ def signup(error, entries, navigation):
         return
 
     if not (has_upper(password) and has_lower(password) and has_digit(password) and 10 <= len(password) <= 25):
-        error.configure(text="""Invalid password, must contain:
-        1- One upper case letter
-        2- One upper case letter
-        3- One number""")
+        error.configure(text="Password must contain upper case letter, lower case letter and a number")
         valid = False
         return
 
@@ -252,7 +249,7 @@ def login(email_entry, password_entry, navigation):
         password_entry.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
     else:
-        current_canvas.create_text((230, 490), anchor="n", text='Invalid email or password!', font='times 16 bold',
+        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 16 bold',
                                    fill='red')  # INVALID LOGIN LABEL
 
 
