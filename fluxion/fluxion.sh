@@ -1159,7 +1159,7 @@ function deauthMENU {
                         echo -e "      "$red"["$yellow"3"$red"]"$transparent" Select another network"
                         echo -e "      "$red"["$yellow"4"$red"]"$transparent" Exit"
                         echo -n '      #> '
-                        echo -e "pptd_deauth_status"
+                        echo -e "pptd_status"
                         read yn
 
                         case $yn in
