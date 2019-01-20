@@ -35,163 +35,6 @@ for name, page in pages.items():
         canvas.pack()
         frame.pack()
 
-    elif name == "login":
-        canvas.create_image(240, 120, image=images["loginLogo"], anchor="center")  # Logo Image
-
-        canvas.create_text((90, 280), anchor="w", text='Email:', font='times 12 bold',
-                           fill='#243746')  # EMAIL LABEL
-        canvas.create_text((90, 365), anchor="w", text='Password:', font='times 12 bold',
-                           fill='#243746')  # PASSWORD LABEL
-
-        entry_email = tk.Entry(canvas)  # Email box
-        entry_email.focus_set()
-        canvas.create_window(90, 315, anchor="w", window=entry_email, height=30, width=300)
-
-        entry_password = tk.Entry(canvas, show="*")  # Password box
-        canvas.create_window(90, 390, anchor="w", window=entry_password, height=30, width=300)
-        entry_password.bind('<Return>', lambda x: button_login.invoke())
-        entry_email.bind('<Return>', lambda x: entry_password.focus_set())
-
-        button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
-                                 command=lambda: h.login(entry_email, entry_password,
-                                                         (pages["login"], pages["home"], "Home", root)))
-        button_login.configure(width=10, height=2)
-        canvas.create_window(240, 500, window=button_login)
-
-        button_login_signup = tk.Button(canvas, text='Sign up', borderwidth=0, font='times 12 underline',
-                                        fg='#00ACD8', command=lambda: h.show_frame(pages["login"]["frame"],
-                                                                                pages["signup"]["frame"],
-                                                                                "Sign up", root))
-        button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
-        canvas.create_window(240, 570, window=button_login_signup)
-
-        button_fb = tk.Button(canvas, image=images["facebook"], borderwidth=0,
-                              command=h.open_facebook)  # Tool button
-        button_fb.config(activebackground=defaultbg)
-        canvas.create_window(92.5, 650, window=button_fb)  # Facebook button position
-
-        button_linkedin = tk.Button(canvas, image=images["linkedin"], borderwidth=0, command=h.open_linkedin)
-        button_linkedin.config(activebackground=defaultbg)
-        canvas.create_window(230, 650, window=button_linkedin)  # Linkedin button position
-
-        button_twitter = tk.Button(canvas, image=images["twitter"], borderwidth=0, command=h.open_twitter)
-        button_twitter.config(activebackground=defaultbg)
-        canvas.create_window(367.5, 650, window=button_twitter)  # Twitter button position
-
-        canvas.pack()
-
-    elif name == "home":
-
-        button_tutorial = tk.Button(canvas, image=images["tutorialIcon"], borderwidth=0,
-                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["tutorials"]["frame"],
-                                                                 "Tutorials", root))  # Tutorial button
-        button_tutorial.config(activebackground=defaultbg)
-        canvas.create_window(125, 160, window=button_tutorial, height=200, width=200)  # Tutorial button postion
-
-        button_manual = tk.Button(canvas, image=images["manualIcon"], borderwidth=0,
-                                  command=lambda: h.show_frame(pages["home"]["frame"], pages["manual"]["frame"],
-                                                               "Manual", root))  # manual button
-        button_manual.config(activebackground=defaultbg)
-        canvas.create_window(355, 160, window=button_manual, height=200, width=200)  # manual button postion
-
-        button_settings = tk.Button(canvas, image=images["settingsIcon"], borderwidth=0,
-                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["settings"]["frame"],
-                                                                 "Settings", root))  # Settings button
-        button_settings.config(activebackground=defaultbg)
-        canvas.create_window(125, 440, window=button_settings, height=200, width=200)  # Settings button postion
-
-        button_tool = tk.Button(canvas, image=images["toolIcon"], borderwidth=0,
-                                command=lambda: h.run_tool((pages["home"]["frame"], pages["interfaces"]["frame"],
-                                                            "Interfaces", root)))  # Tool button
-
-        button_tool.config(activebackground=defaultbg)
-        canvas.create_window(355, 440, window=button_tool, height=200, width=200)  # Tool button postion
-
-        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.logout((pages["home"]["frame"], pages["login"]["frame"],
-                                                            "Login", root)))  # logout button
-        button_logout.config(activebackground=defaultbg)
-        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")  # logout button postion
-
-        canvas.create_text((355, 550), text='Tool', font='Times 18 bold', fill='#243746')
-        canvas.create_text((125, 270), text='Tutorials', font='Times 18 bold', fill='#243746')
-        canvas.create_text((355, 270), text='Manual', font='Times 18 bold', fill='#243746')
-        canvas.create_text((125, 550), text='Settings', font='Times 18 bold', fill='#243746')
-
-        canvas.pack()
-
-    elif name == "interfaces":
-
-        canvas.create_text((238, 40), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="center")
-
-        interface_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
-        interface_output.place(x=82, y=70)
-
-        label_scanning = tk.Label(canvas, text="Scanning for interfaces")
-        label_scanning.place(x=163, y=570)
-        root.after(1, h.scanning(label_scanning, root))
-
-        interface_label_error = tk.Label(canvas, font='times 12', fg='red', text="")
-        interface_label_error.place(x=250, y=580, anchor="center")
-
-        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
-                                           command=lambda: h.scan(interface_output, interface_label_error,
-                                                                  (pages["interfaces"]["frame"],
-                                                                   pages["networks"]["frame"], "Networks", root)))
-        button_interfaces_scan.configure(width=7, height=1)  # Scan
-        canvas.create_window(238, 650, window=button_interfaces_scan)
-
-        button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                           command=lambda: h._exit(
-                                               (pages["interfaces"]["frame"], pages["home"]["frame"],
-                                                "Home", root)))  # HOME_Interface button
-        button_home_interfaces.config(activebackground=defaultbg)
-        canvas.create_window(10, 720, window=button_home_interfaces, height=90, width=90, anchor="sw")
-
-        h.set_globals(interface=interface_output)
-
-        canvas.pack()
-
-    elif name == "networks":
-        canvas.create_text((238, 40), text='Chooser Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
-
-        networks_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
-        networks_output.place(x=82, y=70)
-
-        label_handshake = tk.Label(canvas, text="Waiting for handshake")
-        label_handshake.place(x=20, y=570)
-        root.after(1, h.handshake_waiting(label_handshake, root))
-
-        network_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
-        network_label_error.place(x=250, y=570, anchor="center")
-
-        button_network_confirm = tk.Button(canvas, text="OK!", font='Times 20', fg="#4D4D4D", command=lambda: h.get_webpages((pages["networks"]["frame"], pages["webpages"]["frame"], "webpages", root)))
-        button_network_confirm.configure(width=7, height=1)  # Confirm button size
-        canvas.create_window(250, 600, window=button_network_confirm)
-
-        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
-                                          command=lambda: h.show_frame(pages["networks"]["frame"],
-                                                                       pages["interfaces"]["frame"],
-                                                                       "Interfaces", root))
-
-        button_network_rescan.configure(width=7, height=1)  # Rescan button size
-        canvas.create_window(250, 668, window=button_network_rescan)
-
-        button_stop_handshake = tk.Button(canvas, text="Stop Handshake!", font="times 20")
-        button_stop_handshake.configure(width=7, height=1)
-        canvas.create_window(250, 700, window=button_stop_handshake)
-
-        button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                        command=lambda: h.show_frame(pages["networks"]["frame"],
-                                                                     pages["home"]["frame"], "Home",
-                                                                     root))  # HOME_Interface button
-        button_home_network.config(activebackground=defaultbg)
-        canvas.create_window(10, 720, window=button_home_network, height=90, width=90, anchor="sw")
-
-        h.set_globals(network=networks_output)
-
-        canvas.pack()
-
     elif name == "signup":
 
         button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
@@ -239,6 +82,91 @@ for name, page in pages.items():
                                       (pages["signup"], pages["login"], "Login", root)))
         button_signup.configure(width=10, height=2)
         canvas.create_window(238, 690, window=button_signup, anchor="center")
+
+        canvas.pack()
+
+    elif name == "login":
+        canvas.create_image(240, 120, image=images["loginLogo"], anchor="center")  # Logo Image
+
+        canvas.create_text((90, 280), anchor="w", text='Email:', font='times 12 bold',
+                           fill='#243746')  # EMAIL LABEL
+        canvas.create_text((90, 365), anchor="w", text='Password:', font='times 12 bold',
+                           fill='#243746')  # PASSWORD LABEL
+
+        entry_email = tk.Entry(canvas)  # Email box
+        entry_email.focus_set()
+        canvas.create_window(90, 315, anchor="w", window=entry_email, height=30, width=300)
+
+        entry_password = tk.Entry(canvas, show="*")  # Password box
+        canvas.create_window(90, 390, anchor="w", window=entry_password, height=30, width=300)
+        entry_password.bind('<Return>', lambda x: button_login.invoke())
+        entry_email.bind('<Return>', lambda x: entry_password.focus_set())
+
+        button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
+                                 command=lambda: h.login(entry_email, entry_password,
+                                                         (pages["login"], pages["home"], "Home", root)))
+        button_login.configure(width=10, height=2)
+        canvas.create_window(240, 500, window=button_login)
+
+        button_login_signup = tk.Button(canvas, text='Sign up', borderwidth=0, font='times 12 underline',
+                                        fg='#00ACD8', command=lambda: h.show_frame(pages["login"]["frame"],
+                                                                                pages["signup"]["frame"],
+                                                                                "Sign up", root))
+        button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
+        canvas.create_window(240, 570, window=button_login_signup)
+
+        button_fb = tk.Button(canvas, image=images["facebook"], borderwidth=0,
+                              command=h.open_facebook)  # Tool button
+        button_fb.config(activebackground=defaultbg)
+        canvas.create_window(92.5, 650, window=button_fb)  # Facebook button position
+
+        button_linkedIn = tk.Button(canvas, image=images["linkedin"], borderwidth=0, command=h.open_linkedin)
+        button_linkedIn.config(activebackground=defaultbg)
+        canvas.create_window(230, 650, window=button_linkedIn)  # Linkedin button position
+
+        button_twitter = tk.Button(canvas, image=images["twitter"], borderwidth=0, command=h.open_twitter)
+        button_twitter.config(activebackground=defaultbg)
+        canvas.create_window(367.5, 650, window=button_twitter)  # Twitter button position
+
+        canvas.pack()
+
+    elif name == "home":
+
+        button_tutorial = tk.Button(canvas, image=images["tutorialIcon"], borderwidth=0,
+                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["tutorials"]["frame"],
+                                                                 "Tutorials", root))  # Tutorial button
+        button_tutorial.config(activebackground=defaultbg)
+        canvas.create_window(125, 160, window=button_tutorial, height=200, width=200)  # Tutorial button postion
+
+        button_manual = tk.Button(canvas, image=images["manualIcon"], borderwidth=0,
+                                  command=lambda: h.show_frame(pages["home"]["frame"], pages["manual"]["frame"],
+                                                               "Manual", root))  # manual button
+        button_manual.config(activebackground=defaultbg)
+        canvas.create_window(355, 160, window=button_manual, height=200, width=200)  # manual button postion
+
+        button_settings = tk.Button(canvas, image=images["settingsIcon"], borderwidth=0,
+                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["settings"]["frame"],
+                                                                 "Settings", root))  # Settings button
+        button_settings.config(activebackground=defaultbg)
+        canvas.create_window(125, 440, window=button_settings, height=200, width=200)  # Settings button postion
+
+        button_tool = tk.Button(canvas, image=images["toolIcon"], borderwidth=0,
+                                command=lambda: h.run_tool((pages["home"]["frame"], pages["interfaces"]["frame"],
+                                                            "Interfaces", root)))  # Tool button
+
+        button_tool.config(activebackground=defaultbg)
+        canvas.create_window(355, 440, window=button_tool, height=200, width=200)  # Tool button postion
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["home"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")  # logout button postion
+
+        canvas.create_text((355, 550), text='Tool', font='Times 18 bold', fill='#243746')
+        canvas.create_text((125, 270), text='Tutorials', font='Times 18 bold', fill='#243746')
+        canvas.create_text((355, 270), text='Manual', font='Times 18 bold', fill='#243746')
+        canvas.create_text((125, 550), text='Settings', font='Times 18 bold', fill='#243746')
 
         canvas.pack()
 
@@ -459,9 +387,12 @@ for name, page in pages.items():
         view_users_output = tk.Listbox(canvas, height=25, width=40, highlightthickness=0)
         view_users_output.place(x=82, y=90)
 
+        users_label_error = tk.Label(canvas,text="Please select a user!", fg="red", font="times 12")
+        users_label_error.place(x=238, y=570, anchor="center")
+
         button_remove_user = tk.Button(canvas, text="Remove User")
         button_remove_user.config(width=10, height=2)
-        canvas.create_window(238, 600, window=button_remove_user)
+        canvas.create_window(238, 620, window=button_remove_user)
 
         button_home_view_users = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                            command=lambda: h.show_frame(pages["view_users"]["frame"],
@@ -475,6 +406,81 @@ for name, page in pages.items():
                                                                "Login", root))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+
+        canvas.pack()
+
+    elif name == "interfaces":
+
+        canvas.create_text((238, 40), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="center")
+
+        interface_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
+        interface_output.place(x=82, y=70)
+
+        label_scanning = tk.Label(canvas, text="Scanning for interfaces")
+        label_scanning.place(x=163, y=570)
+        root.after(1, h.scanning(label_scanning, root))
+
+        interface_label_error = tk.Label(canvas, font='times 12', fg='red', text="")
+        interface_label_error.place(x=250, y=580, anchor="center")
+
+        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
+                                           command=lambda: h.scan(interface_output, interface_label_error,
+                                                                  (pages["interfaces"]["frame"],
+                                                                   pages["networks"]["frame"], "Networks", root)))
+        button_interfaces_scan.configure(width=7, height=1)  # Scan
+        canvas.create_window(238, 650, window=button_interfaces_scan)
+
+        button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                           command=lambda: h._exit(
+                                               (pages["interfaces"]["frame"], pages["home"]["frame"],
+                                                "Home", root)))  # HOME_Interface button
+        button_home_interfaces.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_interfaces, height=90, width=90, anchor="sw")
+
+        h.set_globals(interface=interface_output)
+
+        canvas.pack()
+
+    elif name == "networks":
+        canvas.create_text((238, 40), text='Chooser Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
+
+        networks_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
+        networks_output.place(x=82, y=70)
+
+        label_handshake = tk.Label(canvas, text="Waiting for handshake")
+        label_handshake.place(x=20, y=570)
+        root.after(1, h.handshake_waiting(label_handshake, root))
+
+        network_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
+        network_label_error.place(x=250, y=570, anchor="center")
+
+        button_network_confirm = tk.Button(canvas, text="OK!", font='Times 20', fg="#4D4D4D",
+                                           command=lambda: h.get_webpages((pages["networks"]["frame"],
+                                                                           pages["webpages"]["frame"], "webpages",
+                                                                           root)))
+        button_network_confirm.configure(width=7, height=1)  # Confirm button size
+        canvas.create_window(250, 600, window=button_network_confirm)
+
+        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
+                                          command=lambda: h.show_frame(pages["networks"]["frame"],
+                                                                       pages["interfaces"]["frame"],
+                                                                       "Interfaces", root))
+
+        button_network_rescan.configure(width=7, height=1)  # Rescan button size
+        canvas.create_window(250, 668, window=button_network_rescan)
+
+        button_stop_handshake = tk.Button(canvas, text="Stop Handshake!", font="times 20")
+        button_stop_handshake.configure(width=7, height=1)
+        canvas.create_window(250, 700, window=button_stop_handshake)
+
+        button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                        command=lambda: h.show_frame(pages["networks"]["frame"],
+                                                                     pages["home"]["frame"], "Home",
+                                                                     root))  # HOME_Interface button
+        button_home_network.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_network, height=90, width=90, anchor="sw")
+
+        h.set_globals(network=networks_output)
 
         canvas.pack()
 
