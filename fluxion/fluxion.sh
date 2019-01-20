@@ -2103,6 +2103,7 @@ function attack {
                 echo "                                       "
                 echo "      1) Choose another network"
                 echo "      2) Exit"
+                echo -e "pptd_attack_started"
                 echo " "
                 echo -n '      #> '
                 read yn

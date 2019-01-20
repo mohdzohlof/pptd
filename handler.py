@@ -138,6 +138,26 @@ def __exit(navigation):
     show_frame(current_page, next_page, window_name, root)
 
 
+def change_network(navigation):
+    current_frame = navigation[0]
+    next_frame = navigation[1]
+    window_name = navigation[2]
+    root = navigation[3]
+
+    q.put("back")
+
+    c = next_frame.winfo_children()[0]
+    network_listbox = c.winfo_children()[0]
+    network_confirm_button = c.winfo_children()[3]
+    network_rescan_button = c.winfo_children()[4]
+
+    network_listbox.delete(0, "end")
+    q.put(network_confirm_button)
+    q.put(network_rescan_button)
+
+    show_frame(current_frame, next_frame, window_name, root)
+
+
 def rescan(current_frame):
 
     c = current_frame.winfo_children()[0]
@@ -167,11 +187,11 @@ def stop_handshake(current_frame):
 
 
 def wait_handshake(navigation):
+    global found
     current_frame = navigation[0]
     next_frame = navigation[1]
     window_name = navigation[2]
     root = navigation[3]
-
     if found:
         show_frame(current_frame, next_frame, window_name, root)
     else:
@@ -197,9 +217,14 @@ def get_webpages(network_listbox, network_error_label, navigation):
         network_error_label.configure(text="Please select an interface!")
 
 
-def start_attack():
-    selected = webpages.curselection()[0]
-    q.put(selected)
+def start_attack(webpages_error_label, webpages_listbox, webpages_confirm_button, webpages_back_button):
+    if len(webpages_listbox.curselection()) > 0:
+        selected = webpages.curselection()[0]
+        q.put(selected)
+        webpages_confirm_button.configure(state="disabled")
+        webpages_back_button.configure(state="normal")
+    else:
+        webpages_error_label.place(x=238, y=540, anchor="center")
 
 
 def scan(interface_listbox, interface_error_label, f):
@@ -435,3 +460,14 @@ def show_frame(current_frame, frame, title, root):
         network_confirm_button.configure(state="disabled")
         network_rescan_button.configure(state="disabled")
         network_stop_handshake_button.configure(state="disabled")
+    elif title == "Web Pages":
+        c = frame.winfo_children()[0]
+        webpages_attack_label = c.winfo_children()[1]
+        webpages_error_label = c.winfo_children()[2]
+        webpages_confirm_button = c.winfo_children()[3]
+        webpages_exit_button = c.winfo_children()[4]
+
+        webpages_attack_label.place_forget()
+        webpages_error_label.place_forget()
+        webpages_confirm_button.configure(state="normal")
+        webpages_exit_button.configure(state="disabled")

@@ -44,6 +44,7 @@ def fluxion(q):
             network = True
 
         if "pptd_webpages_start" in line:
+            h.found = True
             webpage = True
 
         if interface:
@@ -58,12 +59,12 @@ def fluxion(q):
 
         if webpage:
             if not line.startswith("pptd_webpages"):
-                h.found = True
                 fw.write(line)
                 fw.flush()
 
         # Select interface
         if "pptd_interface_end" in line:
+            interface = False
             interface_confirm_button = q.get()
             interface_error_label = q.get()
             if interface_confirm_button == "exit" or interface_error_label == "exit":
@@ -79,15 +80,17 @@ def fluxion(q):
                 p.send_signal(signal.SIGINT)
                 return
             interface_input = interface_input + 1
-            interface = False
 
             p.stdin.write('{}\n'.format(interface_input).encode())
             p.stdin.flush()
 
         # Select network
         if "pptd_network_end" in line:
+            network = False
             network_confirm_button = q.get()
+            print("test1")
             network_rescan_button = q.get()
+            print("test2")
             if network_confirm_button == "exit" or network_rescan_button == "exit":
                 p.send_signal(signal.SIGINT)
                 return
@@ -97,6 +100,7 @@ def fluxion(q):
             network_confirm_button.configure(state="normal")
             network_rescan_button.configure(state="normal")
             network_input = q.get()
+            print("test3")
             if network_input == "exit":
                 p.send_signal(signal.SIGINT)
                 return
@@ -108,22 +112,24 @@ def fluxion(q):
             else:
                 network_input = network_input + 1
                 p.stdin.write('{}\n'.format(network_input).encode())
-            network = False
             p.stdin.flush()
 
         # Select webpage
         if "pptd_webpages_end" in line:
+            webpage = False
             for x in fwr.readlines():
                 output_line = " ".join(x.split())
                 webpage_listbox.insert("end", output_line)
             webpage_input = q.get()
             if webpage_input == "exit":
-                p.send_signal(signal.SIGINT)
+                p.stdin.write(b'45\n')
+                p.stdin.write(b'2\n')
+                p.stdin.flush()
                 return
             webpage_input = webpage_input + 1
-            webpage = False
             p.stdin.write('{}\n'.format(webpage_input).encode())
             p.stdin.flush()
+            h.found = False
 
         # Select language
         if "pptd_language" in line:
@@ -178,3 +184,13 @@ def fluxion(q):
         if "pptd_attack_strategy" in line:
             p.stdin.write(b'1\n')  # [1] Web Interface
             p.stdin.flush()
+
+        if "pptd_attack_started" in line:
+            attack_input = q.get()
+            print(attack_input)
+            if attack_input == "exit":
+                p.stdin.write(b'2\n')  # [2] Exit
+                p.stdin.flush()
+            elif attack_input == "back":
+                p.stdin.write(b'1\n')  # [1] Choose another network
+                p.stdin.flush()

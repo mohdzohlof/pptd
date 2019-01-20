@@ -151,96 +151,22 @@ for name, page in pages.items():
         canvas.create_window(125, 440, window=button_settings, height=200, width=200)  # Settings button postion
 
         button_tool = tk.Button(canvas, image=images["toolIcon"], borderwidth=0,
-                                command=lambda: h.show_frame(pages["home"]["frame"], pages["networks"]["frame"],
-                                                            "Networks", root))  # Tool button
+                                command=lambda: h.run_tool((pages["home"]["frame"], pages["interfaces"]["frame"],
+                                                             "Interfaces", root)))  # Tool button
 
         button_tool.config(activebackground=defaultbg)
-        canvas.create_window(355, 440, window=button_tool, height=200, width=200)  # Tool button postion
+        canvas.create_window(355, 440, window=button_tool, height=200, width=200)  # Tool button position
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
                                   command=lambda: h.logout((pages["home"]["frame"], pages["login"]["frame"],
                                                             "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
-        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")  # logout button postion
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")  # logout button position
 
         canvas.create_text((355, 550), text='Tool', font='Times 18 bold', fill='#243746')
         canvas.create_text((125, 270), text='Tutorials', font='Times 18 bold', fill='#243746')
         canvas.create_text((355, 270), text='Manual', font='Times 18 bold', fill='#243746')
         canvas.create_text((125, 550), text='Settings', font='Times 18 bold', fill='#243746')
-
-        canvas.pack()
-
-    elif name == "interfaces":
-
-        canvas.create_text((238, 40), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="center")
-
-        interface_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
-        interface_output.place(x=82, y=70)
-
-        label_scanning = tk.Label(canvas, text="Scanning for interfaces")
-        h.scanning(label_scanning, root)
-
-        interface_label_error = tk.Label(canvas, font='times 12', fg='red', text="")
-        interface_label_error.place(x=250, y=580, anchor="center")
-
-        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
-                                           command=lambda: h.scan(interface_output, interface_label_error,
-                                                                  (pages["interfaces"]["frame"],
-                                                                   pages["networks"]["frame"], "Networks", root)))
-        button_interfaces_scan.configure(width=7, height=1)  # Scan
-        canvas.create_window(238, 650, window=button_interfaces_scan)
-
-        button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                           command=lambda: h.__exit(
-                                               (pages["interfaces"]["frame"], pages["home"]["frame"],
-                                                "Home", root)))  # HOME_Interface button
-        button_home_interfaces.config(activebackground=defaultbg)
-        canvas.create_window(10, 720, window=button_home_interfaces, height=90, width=90, anchor="sw")
-
-        h.set_globals(interface=interface_output)
-
-        canvas.pack()
-
-    elif name == "networks":
-        canvas.create_text((238, 40), text='Choose Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
-
-        networks_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
-        networks_output.place(x=82, y=70)
-
-        label_handshake = tk.Label(canvas, text="Waiting for handshake")
-        label_handshake.place(x=160, y=540)
-        root.after(1, h.handshake_waiting(label_handshake, root))
-
-        network_label_error = tk.Label(canvas, font='times 12', fg='red', text="asd")
-        network_label_error.place(x=238, y=550, anchor="center")
-
-        button_network_confirm = tk.Button(canvas, text="Select", font='Times 20', fg="#4D4D4D",
-                                           command=lambda: h.get_webpages(networks_output, network_label_error,
-                                                                          (pages["networks"]["frame"],
-                                                                           pages["webpages"]["frame"], "webpages",
-                                                                           root)))
-        button_network_confirm.configure(width=7, height=1)  # Confirm button size
-        canvas.create_window(238, 600, window=button_network_confirm, anchor="center")
-
-        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
-                                          command=lambda: h.rescan(pages["networks"]["frame"]))
-
-        button_network_rescan.configure(width=7, height=1)  # Rescan button size
-        canvas.create_window(160, 668, window=button_network_rescan, anchor="center")
-
-        button_stop_handshake = tk.Button(canvas, text="Stop!", font="times 20",
-                                          command=lambda: h.stop_handshake(pages["networks"]["frame"]))
-        button_stop_handshake.configure(width=7, height=1)
-        canvas.create_window(316, 668, window=button_stop_handshake, anchor="center")
-
-        button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                        command=lambda: h.__exit((pages["networks"]["frame"],
-                                                                     pages["home"]["frame"], "Home",
-                                                                     root)))  # HOME_Interface button
-        button_home_network.config(activebackground=defaultbg)
-        canvas.create_window(10, 720, window=button_home_network, height=90, width=90, anchor="sw")
-
-        h.set_globals(network=networks_output)
 
         canvas.pack()
 
@@ -555,7 +481,7 @@ for name, page in pages.items():
         canvas.create_window(238, 650, window=button_interfaces_scan)
 
         button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                           command=lambda: h._exit(
+                                           command=lambda: h.__exit(
                                                (pages["interfaces"]["frame"], pages["home"]["frame"],
                                                 "Home", root)))  # HOME_Interface button
         button_home_interfaces.config(activebackground=defaultbg)
@@ -579,21 +505,19 @@ for name, page in pages.items():
         network_label_error.place(x=238, y=550, anchor="center")
 
         button_network_confirm = tk.Button(canvas, text="Select", font='Times 20', fg="#4D4D4D",
-                                           command=lambda: h.get_webpages((pages["networks"]["frame"],
-                                                                           pages["webpages"]["frame"], "webpages",
+                                           command=lambda: h.get_webpages(networks_output, network_label_error, (pages["networks"]["frame"],
+                                                                           pages["webpages"]["frame"], "Web Pages",
                                                                            root)))
         button_network_confirm.configure(width=7, height=1)  # Confirm button size
         canvas.create_window(238, 600, window=button_network_confirm)
 
         button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
-                                          command=lambda: h.show_frame(pages["networks"]["frame"],
-                                                                       pages["interfaces"]["frame"],
-                                                                       "Interfaces", root))
+                                          command=lambda: h.rescan(pages["networks"]["frame"]))
 
         button_network_rescan.configure(width=7, height=1)  # Rescan button size
         canvas.create_window(160, 670, window=button_network_rescan)
 
-        button_stop_handshake = tk.Button(canvas, text="Stop!", font="times 20")
+        button_stop_handshake = tk.Button(canvas, text="Stop!", font="times 20", command=lambda: h.stop_handshake(pages["networks"]["frame"]))
         button_stop_handshake.configure(width=7, height=1)
         canvas.create_window(316, 670, window=button_stop_handshake)
 
@@ -621,18 +545,17 @@ for name, page in pages.items():
         label_attack_in_progress.place(x=180, y=540)
         root.after(1, h.attack_in_progress(label_attack_in_progress, root))
 
-        # label_error_webpage = tk.Label(canvas, text="Please select a web page!", fg="red", font="times 12")
-        # label_error_webpage.place(x=238, y=540, anchor="center")
+        label_error_webpage = tk.Label(canvas, fg="red", font="times 12", text="Please select a web page!")
 
-        button_start_attack = tk.Button(canvas, text="ATTACK!", borderwidth=1, command=h.start_attack)
+        button_start_attack = tk.Button(canvas, text="ATTACK!", borderwidth=1, command=lambda: h.start_attack(label_error_webpage, webpages_output, button_start_attack, button_change_network))
         button_start_attack.config(activebackground=defaultbg)
         canvas.create_window(238, 600, window=button_start_attack, height=50, width=90)
 
-        button_change_network = tk.Button(canvas, text="Change Network")
+        button_change_network = tk.Button(canvas, text="Change Network", command=lambda: h.change_network((pages["webpages"]["frame"], pages["networks"]["frame"], "Networks", root)))
         button_change_network.config(activebackground=defaultbg)
         canvas.create_window(160, 670, window=button_change_network, height=50, width=120)
 
-        button_exit = tk.Button(canvas, text="Exit")
+        button_exit = tk.Button(canvas, text="Exit", command=lambda: h.__exit((pages["webpages"]["frame"], pages["home"]["frame"], "Home", root)))
         button_exit.config(activebackground=defaultbg)
         canvas.create_window(316, 670, window=button_exit, height=50, width=120)
 
