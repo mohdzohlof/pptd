@@ -16,6 +16,7 @@ webpages = None
 admin = False
 interface_label_scan = None
 network_label_scan = None
+found = False
 
 q = None
 
@@ -126,7 +127,7 @@ def set_globals(connection=None, username=None, interface=None, network=None, ac
         webpages = webpage
 
 
-def _exit(navigation):
+def __exit(navigation):
     current_page = navigation[0]
     next_page = navigation[1]
     window_name = navigation[2]
@@ -137,15 +138,63 @@ def _exit(navigation):
     show_frame(current_page, next_page, window_name, root)
 
 
-def get_webpages(f):
-    current_page = f[0]
-    next_page = f[1]
-    window_name = f[2]
-    root = f[3]
-    selected = networks.curselection()[0]
-    q.put(selected)
+def rescan(current_frame):
 
-    show_frame(current_page, next_page, window_name, root)
+    c = current_frame.winfo_children()[0]
+    network_confirm_button = c.winfo_children()[3]
+    network_rescan_button = c.winfo_children()[4]
+
+    q.put("rescan")
+    q.put(network_confirm_button)
+    q.put(network_rescan_button)
+
+
+def stop_handshake(current_frame):
+    c = current_frame.winfo_children()[0]
+    network_listbox = c.winfo_children()[0]
+    network_confirm_button = c.winfo_children()[3]
+    network_rescan_button = c.winfo_children()[4]
+    network_stop_handshake_button = c.winfo_children()[5]
+
+    network_listbox.delete(0, "end")
+    network_confirm_button.configure(state="normal")
+    network_rescan_button.configure(state="normal")
+    network_stop_handshake_button.configure(state="disabled")
+
+    q.put("ammah na3eemah, na3ameeen!!")
+    q.put(network_confirm_button)
+    q.put(network_rescan_button)
+
+
+def wait_handshake(navigation):
+    current_frame = navigation[0]
+    next_frame = navigation[1]
+    window_name = navigation[2]
+    root = navigation[3]
+
+    if found:
+        show_frame(current_frame, next_frame, window_name, root)
+    else:
+        root.after(1, lambda: wait_handshake(navigation))
+
+
+def get_webpages(network_listbox, network_error_label, navigation):
+
+    if len(network_listbox.curselection()) > 0:
+        current_frame = navigation[0]
+        c = current_frame.winfo_children()[0]
+        network_confirm_button = c.winfo_children()[3]
+        network_rescan_button = c.winfo_children()[4]
+        network_stop_handshake_button = c.winfo_children()[5]
+
+        network_confirm_button.configure(state="disabled")
+        network_rescan_button.configure(state="disabled")
+        network_stop_handshake_button.configure(state="normal")
+        selected = networks.curselection()[0]
+        q.put(selected)
+        wait_handshake(navigation)
+    else:
+        network_error_label.configure(text="Please select an interface!")
 
 
 def start_attack():
@@ -153,23 +202,28 @@ def start_attack():
     q.put(selected)
 
 
-def scan(interface_listbox, label_error, f):
+def scan(interface_listbox, interface_error_label, f):
     current_frame = f[0]
     next_frame = f[1]
     window_name = f[2]
     root = f[3]
 
     if len(interface_listbox.curselection()) > 0:
+        c = next_frame.winfo_children()[0]
+        network_confirm_button = c.winfo_children()[3]
+        network_rescan_button = c.winfo_children()[4]
         selected = interface_listbox.curselection()[0]
         q.put(selected)
+        q.put(network_confirm_button)
+        q.put(network_rescan_button)
+
         show_frame(current_frame, next_frame, window_name, root)
     else:
-        label_error.configure(text="Please select an interface!")
+        interface_error_label.configure(text="Please select an interface!")
 
 
 def run_tool(f):
     global interfaces, networks, q
-    # interfaces.delete(0, "end")
     q = Queue()
     current_frame = f[0]
     next_frame = f[1]

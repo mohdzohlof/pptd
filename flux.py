@@ -3,8 +3,8 @@ from subprocess import Popen, PIPE
 import os
 import sys
 import re
-import time
 import io
+import handler as h
 
 
 def fluxion(q):
@@ -58,18 +58,22 @@ def fluxion(q):
 
         if webpage:
             if not line.startswith("pptd_webpages"):
+                h.found = True
                 fw.write(line)
                 fw.flush()
 
         # Select interface
         if "pptd_interface_end" in line:
-            button = q.get()
-            if button == "exit":
+            interface_confirm_button = q.get()
+            interface_error_label = q.get()
+            if interface_confirm_button == "exit" or interface_error_label == "exit":
                 p.send_signal(signal.SIGINT)
+                return
             for x in fir.readlines():
                 output_line = " ".join(x.split())
                 interface_listbox.insert("end", output_line)
-            button.configure(state="normal")
+            interface_confirm_button.configure(state="normal")
+            interface_error_label.place_forget()
             interface_input = q.get()
             if interface_input == "exit":
                 p.send_signal(signal.SIGINT)
@@ -82,15 +86,29 @@ def fluxion(q):
 
         # Select network
         if "pptd_network_end" in line:
+            network_confirm_button = q.get()
+            network_rescan_button = q.get()
+            if network_confirm_button == "exit" or network_rescan_button == "exit":
+                p.send_signal(signal.SIGINT)
+                return
             for x in fnr.readlines():
                 output_line = " ".join(x.split())
                 network_listbox.insert("end", output_line)
+            network_confirm_button.configure(state="normal")
+            network_rescan_button.configure(state="normal")
             network_input = q.get()
             if network_input == "exit":
                 p.send_signal(signal.SIGINT)
-            network_input = network_input + 1
+                return
+            elif network_input == "rescan":
+                p.stdin.write(b'r\n')
+                network_listbox.delete(0, "end")
+                network_confirm_button.configure(state="disabled")
+                network_rescan_button.configure(state="disabled")
+            else:
+                network_input = network_input + 1
+                p.stdin.write('{}\n'.format(network_input).encode())
             network = False
-            p.stdin.write('{}\n'.format(network_input).encode())
             p.stdin.flush()
 
         # Select webpage
@@ -101,6 +119,7 @@ def fluxion(q):
             webpage_input = q.get()
             if webpage_input == "exit":
                 p.send_signal(signal.SIGINT)
+                return
             webpage_input = webpage_input + 1
             webpage = False
             p.stdin.write('{}\n'.format(webpage_input).encode())
@@ -143,9 +162,12 @@ def fluxion(q):
 
         # Handshake status
         if "pptd_status" in line:
-            p.stdin.write(b'1\n')  # [1] Check handshake
+            if q.empty():
+                p.stdin.write(b'1\n')  # [1] Check handshake
+            else:
+                q.get()
+                p.stdin.write(b'3\n')  # [1] Choose another network
             p.stdin.flush()
-            time.sleep(5)
 
         # Create SSL Certificate
         if "pptd_certificate" in line:

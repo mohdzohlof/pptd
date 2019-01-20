@@ -170,6 +170,125 @@ for name, page in pages.items():
 
         canvas.pack()
 
+    elif name == "interfaces":
+
+        canvas.create_text((238, 40), text='Choose Interface', font='Times 18 bold', fill='#4D4D4D', anchor="center")
+
+        interface_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
+        interface_output.place(x=82, y=70)
+
+        label_scanning = tk.Label(canvas, text="Scanning for interfaces")
+        h.scanning(label_scanning, root)
+
+        interface_label_error = tk.Label(canvas, font='times 12', fg='red', text="")
+        interface_label_error.place(x=250, y=580, anchor="center")
+
+        button_interfaces_scan = tk.Button(canvas, text="Scan", font='Times 20 bold', fg="#4D4D4D",
+                                           command=lambda: h.scan(interface_output, interface_label_error,
+                                                                  (pages["interfaces"]["frame"],
+                                                                   pages["networks"]["frame"], "Networks", root)))
+        button_interfaces_scan.configure(width=7, height=1)  # Scan
+        canvas.create_window(238, 650, window=button_interfaces_scan)
+
+        button_home_interfaces = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                           command=lambda: h.__exit(
+                                               (pages["interfaces"]["frame"], pages["home"]["frame"],
+                                                "Home", root)))  # HOME_Interface button
+        button_home_interfaces.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_interfaces, height=90, width=90, anchor="sw")
+
+        h.set_globals(interface=interface_output)
+
+        canvas.pack()
+
+    elif name == "networks":
+        canvas.create_text((238, 40), text='Chooser Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
+
+        networks_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
+        networks_output.place(x=82, y=70)
+
+        label_handshake = tk.Label(canvas, text="Waiting for handshake")
+        label_handshake.place(x=20, y=570)
+        root.after(1, h.handshake_waiting(label_handshake, root))
+
+        network_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
+        network_label_error.place(x=250, y=570, anchor="center")
+
+        button_network_confirm = tk.Button(canvas, text="OK!", font='Times 20', fg="#4D4D4D", command=lambda: h.get_webpages(networks_output, network_label_error, (pages["networks"]["frame"], pages["webpages"]["frame"], "webpages", root)))
+        button_network_confirm.configure(width=7, height=1)  # Confirm button size
+        canvas.create_window(250, 600, window=button_network_confirm)
+
+        button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
+                                          command=lambda: h.rescan(pages["networks"]["frame"]))
+
+        button_network_rescan.configure(width=7, height=1)  # Rescan button size
+        canvas.create_window(250, 668, window=button_network_rescan)
+
+        button_stop_handshake = tk.Button(canvas, text="Stop Handshake!", font="times 20", command=lambda: h.stop_handshake(pages["networks"]["frame"]))
+        button_stop_handshake.configure(width=7, height=1)
+        canvas.create_window(250, 700, window=button_stop_handshake)
+
+        button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                        command=lambda: h.__exit((pages["networks"]["frame"],
+                                                                     pages["home"]["frame"], "Home",
+                                                                     root)))  # HOME_Interface button
+        button_home_network.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_network, height=90, width=90, anchor="sw")
+
+        h.set_globals(network=networks_output)
+
+        canvas.pack()
+
+    elif name == "signup":
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["signup"]["frame"], pages["login"]["frame"],
+                                                             "Login", root))
+
+        button_back.config(activebackground=defaultbg)
+        canvas.create_window(50, 50, window=button_back, height=90, width=90)
+
+        signup_label_error = tk.Label(canvas, font='times 12', fg='red')
+        signup_label_error.place(x=238, y=640, anchor="center")
+        canvas.create_image(240, 100, image=images["signupIcon"], anchor="center")
+        canvas.create_image(85, 230, image=images["firstNameIcon"], anchor="center")
+        canvas.create_image(85, 320, image=images["lastNameIcon"], anchor="center")
+        canvas.create_image(85, 410, image=images["emailIcon"], anchor="center")
+        canvas.create_image(85, 500, image=images["passwordIcon"], anchor="center")
+        canvas.create_image(85, 590, image=images["confirmPasswordIcon"], anchor="center")
+
+        canvas.create_text((125, 205), anchor="w", text='First Name', font='times 14 bold', fill='#4D4D4D')
+        canvas.create_text((125, 295), anchor="w", text='Last Name', font='times 14 bold', fill='#4D4D4D')
+        canvas.create_text((125, 385), anchor="w", text='Email', font='times 14 bold', fill='#4D4D4D')
+        canvas.create_text((125, 475), anchor="w", text='Password', font='times 14 bold', fill='#4D4D4D')
+        canvas.create_text((125, 565), anchor="w", text='Confirm Password', font='times 14 bold', fill='#4D4D4D')
+
+        firstNameEntry = tk.Entry(canvas)
+        canvas.create_window(125, 232, window=firstNameEntry, height=30, width=300, anchor="w")
+
+        lastNameEntry = tk.Entry(canvas)
+        canvas.create_window(125, 322, window=lastNameEntry, height=30, width=300, anchor="w")
+
+        emailEntry = tk.Entry(canvas)
+        canvas.create_window(125, 412, window=emailEntry, height=30, width=300, anchor="w")
+
+        passwordEntry = tk.Entry(canvas, show="*")
+        canvas.create_window(125, 502, window=passwordEntry, height=30, width=300, anchor="w")
+
+        confirmPasswordEntry = tk.Entry(canvas, show="*")
+        canvas.create_window(125, 592, window=confirmPasswordEntry, height=30, width=300, anchor="w")
+
+        button_signup = tk.Button(canvas,
+                                  text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8',
+                                  command=lambda: h.signup(
+                                      signup_label_error,
+                                      (firstNameEntry, lastNameEntry, emailEntry, passwordEntry, confirmPasswordEntry),
+                                      (pages["signup"], pages["login"], "Login", root)))
+        button_signup.configure(width=10, height=2)
+        canvas.create_window(238, 690, window=button_signup, anchor="center")
+
+        canvas.pack()
+
     elif name == "tutorials":
 
         canvas.create_image(240, 110, image=images["tutorialsTestResized"])
