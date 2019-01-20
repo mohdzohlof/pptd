@@ -442,24 +442,24 @@ for name, page in pages.items():
         canvas.pack()
 
     elif name == "networks":
-        canvas.create_text((238, 40), text='Chooser Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
+        canvas.create_text((238, 40), text='Choose Network', font='Times 18 bold', fill='#4D4D4D', anchor="center")
 
         networks_output = tk.Listbox(canvas, height=25, width=40, borderwidth=0, highlightthickness=0)
         networks_output.place(x=82, y=70)
 
         label_handshake = tk.Label(canvas, text="Waiting for handshake")
-        label_handshake.place(x=20, y=570)
+        label_handshake.place(x=163, y=540)
         root.after(1, h.handshake_waiting(label_handshake, root))
 
-        network_label_error = tk.Label(canvas, font='times 12 bold', fg='red', text="")
-        network_label_error.place(x=250, y=570, anchor="center")
+        network_label_error = tk.Label(canvas, font='times 12', fg='red')
+        network_label_error.place(x=238, y=550, anchor="center")
 
-        button_network_confirm = tk.Button(canvas, text="OK!", font='Times 20', fg="#4D4D4D",
+        button_network_confirm = tk.Button(canvas, text="Select", font='Times 20', fg="#4D4D4D",
                                            command=lambda: h.get_webpages((pages["networks"]["frame"],
                                                                            pages["webpages"]["frame"], "webpages",
                                                                            root)))
         button_network_confirm.configure(width=7, height=1)  # Confirm button size
-        canvas.create_window(250, 600, window=button_network_confirm)
+        canvas.create_window(238, 600, window=button_network_confirm)
 
         button_network_rescan = tk.Button(canvas, text="Rescan", font='Times 20', fg="#4D4D4D",
                                           command=lambda: h.show_frame(pages["networks"]["frame"],
@@ -467,11 +467,11 @@ for name, page in pages.items():
                                                                        "Interfaces", root))
 
         button_network_rescan.configure(width=7, height=1)  # Rescan button size
-        canvas.create_window(250, 668, window=button_network_rescan)
+        canvas.create_window(160, 670, window=button_network_rescan)
 
-        button_stop_handshake = tk.Button(canvas, text="Stop Handshake!", font="times 20")
+        button_stop_handshake = tk.Button(canvas, text="Stop!", font="times 20")
         button_stop_handshake.configure(width=7, height=1)
-        canvas.create_window(250, 700, window=button_stop_handshake)
+        canvas.create_window(316, 670, window=button_stop_handshake)
 
         button_home_network = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                         command=lambda: h.show_frame(pages["networks"]["frame"],
@@ -511,12 +511,6 @@ for name, page in pages.items():
         button_exit = tk.Button(canvas, text="Exit")
         button_exit.config(activebackground=defaultbg)
         canvas.create_window(316, 670, window=button_exit, height=50, width=120)
-
-        button_home_webpsges = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                           command=lambda: h.show_frame(pages["webpages"]["frame"],
-                                                                        pages["home"]["frame"], "Home", root))
-        button_home_webpsges.config(activebackground=defaultbg)
-        canvas.create_window(10, 720, window=button_home_webpsges, height=90, width=90, anchor="sw")
 
         canvas.pack()
 
