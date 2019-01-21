@@ -325,12 +325,18 @@ for name, page in pages.items():
         org_password_label = tk.Label(join_organization_section, text="Organization Password ")
         org_password_label.place(anchor="w", x=10, y=90)
 
-        confirm_new_password_entry = tk.Entry(join_organization_section, show="*", width=30)
-        confirm_new_password_entry.place(anchor="w", x=12, y=110)
+        new_org_password_entry = tk.Entry(join_organization_section, show="*", width=30)
+        new_org_password_entry.place(anchor="w", x=12, y=110)
+
+        settings_error_label = tk.Label(canvas)
+        settings_error_label.place(anchor="w", x=10, y=550)
 
         # ==================================================================================================
 
-        button_apply = tk.Button(canvas, text="Apply")
+        entries = (current_password_entry, new_password_entry, confirm_new_password_entry, org_name_entry,
+                   new_org_password_entry)
+
+        button_apply = tk.Button(canvas, text="Apply", command=lambda: h.update_info(settings_error_label, entries))
         button_apply.config(width=10, height=2)
         canvas.create_window(238, 600, window=button_apply)
 
@@ -547,7 +553,7 @@ for name, page in pages.items():
 
         label_error_webpage = tk.Label(canvas, fg="red", font="times 12", text="Please select a web page!")
 
-        button_start_attack = tk.Button(canvas, text="ATTACK!", borderwidth=1, command=lambda: h.start_attack(label_error_webpage, webpages_output, button_start_attack, button_change_network))
+        button_start_attack = tk.Button(canvas, text="ATTACK!", borderwidth=1, command=lambda: h.start_attack(label_error_webpage, label_attack_in_progress, webpages_output, button_start_attack, button_change_network))
         button_start_attack.config(activebackground=defaultbg)
         canvas.create_window(238, 600, window=button_start_attack, height=50, width=90)
 

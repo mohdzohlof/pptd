@@ -21,6 +21,49 @@ found = False
 q = None
 
 
+def get_user_info():
+    cur = conn.cursor()
+
+    query = "SELECT password, admin, org_id FROM account WHERE email = {email}".format(email=user)
+    cur.execute(query)
+
+    return cur.fetchone()
+
+
+def get_org_info(org_id):
+    cur = conn.cursor()
+
+    query = "SELECT name, password FROM organization WHERE id = {id}".format(id=org_id)
+
+    cur.execute(query)
+
+    return cur.fetchone()
+
+
+def update_info(settings_error_label, entries):
+    current_password = entries[0].get()
+    new_password = entries[1].get()
+    confirm_new_password = entries[2].get()
+    org_name = entries[3].get()
+    org_pass = entries[4].get()
+
+    user_info = get_user_info()
+    password = user_info[0]
+    org_id = user_info[2]
+    admin = False
+    if user_info[1] != 0:
+        admin = True
+
+    org_info = get_org_info(org_id)
+
+    if current_password != password:
+        settings_error_label.configure(text="Invalid password!")
+        return
+    elif new_password != confirm_new_password:
+        settings_error_label.configure(text="Passwords do not match!")
+        return
+
+
 def scanning(label, root):
     global interface_label_scan
     interface_label_scan = label
@@ -217,8 +260,10 @@ def get_webpages(network_listbox, network_error_label, navigation):
         network_error_label.configure(text="Please select an interface!")
 
 
-def start_attack(webpages_error_label, webpages_listbox, webpages_confirm_button, webpages_back_button):
+def start_attack(webpages_error_label, webpages_attack_label, webpages_listbox, webpages_confirm_button, webpages_back_button):
     if len(webpages_listbox.curselection()) > 0:
+        webpages_error_label.place_forget()
+        webpages_attack_label.place(x=180, y=540)
         selected = webpages.curselection()[0]
         q.put(selected)
         webpages_confirm_button.configure(state="disabled")
@@ -471,3 +516,4 @@ def show_frame(current_frame, frame, title, root):
         webpages_error_label.place_forget()
         webpages_confirm_button.configure(state="normal")
         webpages_exit_button.configure(state="disabled")
+    # elif title == "Settings":

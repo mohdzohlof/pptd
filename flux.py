@@ -88,9 +88,7 @@ def fluxion(q):
         if "pptd_network_end" in line:
             network = False
             network_confirm_button = q.get()
-            print("test1")
             network_rescan_button = q.get()
-            print("test2")
             if network_confirm_button == "exit" or network_rescan_button == "exit":
                 p.send_signal(signal.SIGINT)
                 return
@@ -100,7 +98,6 @@ def fluxion(q):
             network_confirm_button.configure(state="normal")
             network_rescan_button.configure(state="normal")
             network_input = q.get()
-            print("test3")
             if network_input == "exit":
                 p.send_signal(signal.SIGINT)
                 return
