@@ -6,6 +6,7 @@ from validate_email import validate_email
 import threading
 from queue import Queue
 import db
+import hashlib
 
 
 assets_path = "assets/"
@@ -20,9 +21,68 @@ found = False
 q = None
 
 
+def md5(password):
+    string = password.encode('utf-8')
+    algorithm = hashlib.md5()
+    algorithm.update(string)
+    hash_string = algorithm.hexdigest()
+    return hash_string
+
+
+def view_users(settings_users_listbox):
+    settings_users_listbox.delete(0, "end")
+    org_id = db.get_org_id(user)
+    employees = db.get_users_by_org(org_id)
+    for employee in [employee for employee in employees if employee != user]:
+        settings_users_listbox.insert("end", employee)
+
+
+def remove_user(settings_users_error_label, settings_users_listbox, navigation):
+    settings_users_error_label.configure(fg="red")
+    if len(settings_users_listbox.curselection()) < 1:
+        settings_users_error_label.configure(text="Please select a user!")
+        return
+    else:
+        selection = settings_users_listbox.curselection()
+        for idx in selection:
+            user_email = settings_users_listbox.get(idx)
+            db.remove_user_org(user_email)
+            show_frame(navigation[0], navigation[1], navigation[2], navigation[3])
+            settings_users_error_label.configure(fg="green")
+            settings_users_error_label.configure(text="Updated successfully!")
+
+
+def change_org_password(settings_admin_error_label, entries, navigation):
+    settings_admin_error_label.configure(fg="red")
+    password = db.get_password(user)
+
+    current_password = md5(entries[0].get())
+    new_org_pass = entries[1].get()
+    confirm_new_org_pass = entries[2].get()
+
+    if current_password != password:
+        settings_admin_error_label.configure(text="Invalid password!")
+        return
+
+    if new_org_pass != confirm_new_org_pass:
+        settings_admin_error_label.configure(text="Passwords do not match!")
+        return
+
+    if not password_is_valid(new_org_pass):
+        settings_admin_error_label.configure(text="Password must contain upper case letter, lower case letter and a number")
+        return
+
+    org_id = db.get_org_id(user)
+
+    db.update_org_password(org_id, md5(new_org_pass))
+    show_frame(navigation[0], navigation[1], navigation[2], navigation[3])
+    settings_admin_error_label.configure(fg="green")
+    settings_admin_error_label.configure(text="Updated successfully!")
+
+
 def update_info(settings_error_label, entries, navigation):
     updated = False
-    current_password = entries[0].get()
+    current_password = md5(entries[0].get())
     new_password = entries[1].get()
     confirm_new_password = entries[2].get()
     org_name = entries[3].get()
@@ -42,7 +102,7 @@ def update_info(settings_error_label, entries, navigation):
             settings_error_label.configure(text="Password must contain upper case letter, lower case letter and a number")
             return
         else:
-            db.update_password(user, new_password)
+            db.update_password(user, md5(new_password))
             updated = True
     else:
         settings_error_label.configure(text="")
@@ -314,7 +374,7 @@ def signup(error, entries, navigation):
     cur = db.conn.cursor()
     first_name = entries[0].get()
     last_name = entries[1].get()
-    email = entries[2].get()
+    email = (entries[2].get()).upper()
     password = entries[3].get()
     confirm_password = entries[4].get()
 
@@ -352,9 +412,9 @@ def signup(error, entries, navigation):
 
     if valid:
         error.configure(text="")
-        query = "INSERT INTO account (email, password, admin, first_name, last_name) VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')".format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
-        cur.execute(query)
-        db.conn.commit()
+
+        db.create_user(email, md5(password), first_name, last_name)
+
         show_frame(current_frame, next_frame, window_name, root)
 
 
@@ -380,36 +440,24 @@ def logout(f):
     show_frame(current_frame, next_frame, root_name, root)
 
 
-def login(email_entry, password_entry, navigation):
-    current_frame = navigation[0]["frame"]
-    current_canvas = navigation[0]["canvas"]
-    next_frame = navigation[1]["frame"]
-    root_name = navigation[2]
-    root = navigation[3]
-
+def login(login_error_label, email_entry, password_entry, navigation):
     authenticate(email_entry, password_entry)
 
     if user is not None:
-        email_entry.delete(0, tk.END)
-        password_entry.delete(0, tk.END)
-        show_frame(current_frame, next_frame, root_name, root)
+        show_frame(navigation[0], navigation[1], navigation[2], navigation[3])
     else:
-        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 12',
-                                   fill='red')  # INVALID LOGIN LABEL
+        login_error_label.configure(text="Invalid email or password!")
 
 
 def authenticate(email_entry, password_entry):
     global user
-    cur = db.conn.cursor()
 
-    email = email_entry.get()
-    passw = password_entry.get()
+    email = (email_entry.get()).upper()
+    passw = md5(password_entry.get())
 
-    query = "SELECT email, admin FROM account WHERE email='{}' AND password='{}'".format(email, passw)
-    cur.execute(query)
-    res = cur.fetchone()
+    res = db.get_user(email, passw)
     if res is not None:
-        user = res[0]
+        user = res
 
 
 def init_root(title="Cover", size="476x730", resizeable_height=False, resizeable_width=False):
@@ -475,7 +523,35 @@ def show_frame(current_frame, frame, title, root):
     root.title(title)
     current_frame.pack_forget()
     frame.pack()
-    if title == "Interfaces":
+
+    if title == "Sign up":
+        c = frame.winfo_children()[0]
+        signup_first_name_entry = c.winfo_children()[1]
+        signup_last_name_entry = c.winfo_children()[2]
+        signup_email_entry = c.winfo_children()[3]
+        signup_pass_entry = c.winfo_children()[4]
+        signup_confirm_pass_entry = c.winfo_children()[5]
+        signup_error_label = c.winfo_children()[6]
+
+        signup_first_name_entry.focus()
+
+        signup_first_name_entry.delete(0, "end")
+        signup_last_name_entry.delete(0, "end")
+        signup_email_entry.delete(0, "end")
+        signup_pass_entry.delete(0, "end")
+        signup_confirm_pass_entry.delete(0, "end")
+        signup_error_label.configure(text="")
+    elif title == "Login":
+        c = frame.winfo_children()[0]
+        login_email_entry = c.winfo_children()[0]
+        login_pass_entry = c.winfo_children()[1]
+        login_error_label = c.winfo_children()[2]
+
+        login_error_label.configure(text="")
+        login_email_entry.focus()
+        login_email_entry.delete(0, "end")
+        login_pass_entry.delete(0, "end")
+    elif title == "Interfaces":
         c = frame.winfo_children()[0]
         interface_scanning_label = c.winfo_children()[1]
         interface_error_label = c.winfo_children()[2]
@@ -550,7 +626,23 @@ def show_frame(current_frame, frame, title, root):
             settings_admin_button.place(x=238, y=650, anchor="center")
         else:
             settings_admin_button.place_forget()
+    elif title == "Admin Settings":
+        c = frame.winfo_children()[0]
+        settings_admin_pass_entry = c.winfo_children()[2]
+        settings_admin_org_labelframe = c.winfo_children()[3]
+        settings_admin_error_label = c.winfo_children()[4]
 
+        settings_admin_org_pass = settings_admin_org_labelframe.winfo_children()[1]
+        settings_admin_org_confirm_pass = settings_admin_org_labelframe.winfo_children()[3]
 
+        settings_admin_error_label.configure(text="")
+        settings_admin_error_label.configure(fg="red")
 
-
+        settings_admin_pass_entry.focus()
+        settings_admin_pass_entry.delete(0, "end")
+        settings_admin_org_pass.delete(0, "end")
+        settings_admin_org_confirm_pass.delete(0, "end")
+    elif title == "Users":
+        c = frame.winfo_children()[0]
+        users_listbox = c.winfo_children()[1]
+        view_users(users_listbox)

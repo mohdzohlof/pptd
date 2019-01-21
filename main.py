@@ -45,8 +45,6 @@ for name, page in pages.items():
         button_back.config(activebackground=defaultbg)
         canvas.create_window(50, 50, window=button_back, height=90, width=90)
 
-        signup_label_error = tk.Label(canvas, font='times 12', fg='red')
-        signup_label_error.place(x=238, y=640, anchor="center")
         canvas.create_image(240, 100, image=images["signupIcon"], anchor="center")
         canvas.create_image(85, 230, image=images["firstNameIcon"], anchor="center")
         canvas.create_image(85, 320, image=images["lastNameIcon"], anchor="center")
@@ -74,6 +72,9 @@ for name, page in pages.items():
 
         confirmPasswordEntry = tk.Entry(canvas, show="*")
         canvas.create_window(125, 592, window=confirmPasswordEntry, height=30, width=300, anchor="w")
+
+        signup_label_error = tk.Label(canvas, font='times 12', fg='red')
+        signup_label_error.place(x=238, y=640, anchor="center")
 
         button_signup = tk.Button(canvas,
                                   text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8',
@@ -103,9 +104,14 @@ for name, page in pages.items():
         entry_password.bind('<Return>', lambda x: button_login.invoke())
         entry_email.bind('<Return>', lambda x: entry_password.focus_set())
 
+        login_label_error = tk.Label(canvas, font='times 12', fg='red')
+        login_label_error.place(x=238, y=435, anchor="center")
+
+        login_navigation = (pages["login"]["frame"], pages["home"]["frame"], "Home", root)
+
         button_login = tk.Button(canvas, text="LOGIN", font='times 12 bold', fg="#243746",
-                                 command=lambda: h.login(entry_email, entry_password,
-                                                         (pages["login"], pages["home"], "Home", root)))
+                                 command=lambda: h.login(login_label_error, entry_email, entry_password,
+                                                         login_navigation))
         button_login.configure(width=10, height=2)
         canvas.create_window(240, 500, window=button_login)
 
@@ -625,10 +631,15 @@ for name, page in pages.items():
 
         # ===========================================================================================
 
-        admin_settings_error_label = tk.Label(canvas, text="asd", font="times 12", fg="red")
-        admin_settings_error_label.place(anchor="center", x=238, y=510)
+        settings_admin_error_label = tk.Label(canvas, font="times 12", fg="red")
+        settings_admin_error_label.place(anchor="center", x=238, y=510)
 
-        button_apply_admin = tk.Button(canvas, text="Apply")
+        entries = (current_password_entry, org_pass_entry, confirm_new_org_pass_entry)
+        settings_admin_apply_navigation = (pages["admin_settings"]["frame"],
+                                                              pages["admin_settings"]["frame"],
+                                                              "Admin Settings", root)
+
+        button_apply_admin = tk.Button(canvas, text="Apply", command=lambda: h.change_org_password(settings_admin_error_label, entries, settings_admin_apply_navigation))
         button_apply_admin.config(width=10, height=2)
         canvas.create_window(235, 600, window=button_apply_admin)
 
@@ -672,13 +683,15 @@ for name, page in pages.items():
 
         canvas.create_text((238, 60), text='Users List', font='Times 18 bold', fill='#4D4D4D', anchor="center")
 
-        view_users_output = tk.Listbox(canvas, height=25, width=40, highlightthickness=0)
+        view_users_output = tk.Listbox(canvas, height=25, width=40, highlightthickness=0, selectmode="multiple")
         view_users_output.place(x=82, y=90)
 
-        users_label_error = tk.Label(canvas,text="Please select a user!", fg="red", font="times 12")
+        users_label_error = tk.Label(canvas, fg="red", font="times 12")
         users_label_error.place(x=238, y=570, anchor="center")
 
-        button_remove_user = tk.Button(canvas, text="Remove User")
+        settings_admin_users_navigation = (pages["view_users"]["frame"], pages["view_users"]["frame"], "Users", root)
+
+        button_remove_user = tk.Button(canvas, text="Remove User", command=lambda: h.remove_user(users_label_error, view_users_output, settings_admin_users_navigation))
         button_remove_user.config(width=10, height=2)
         canvas.create_window(238, 620, window=button_remove_user)
 
