@@ -394,7 +394,7 @@ def login(email_entry, password_entry, navigation):
         password_entry.delete(0, tk.END)
         show_frame(current_frame, next_frame, root_name, root)
     else:
-        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 16 bold',
+        current_canvas.create_text((238, 435), anchor="center", text='Invalid email or password!', font='times 12',
                                    fill='red')  # INVALID LOGIN LABEL
 
 
@@ -516,6 +516,7 @@ def show_frame(current_frame, frame, title, root):
         settings_pass_labelframe = c.winfo_children()[2]
         settings_org_labelframe = c.winfo_children()[3]
         settings_error_label = c.winfo_children()[4]
+        settings_admin_button = c.winfo_children()[6]
 
         settings_new_pass_entry = settings_pass_labelframe.winfo_children()[1]
         settings_confirm_pass_entry = settings_pass_labelframe.winfo_children()[3]
@@ -544,6 +545,12 @@ def show_frame(current_frame, frame, title, root):
             settings_org_name_entry.configure(state="normal")
             settings_org_pass_label.configure(state="normal")
             settings_org_pass_entry.configure(state="normal")
+
+        if admin:
+            settings_admin_button.place(x=238, y=650, anchor="center")
+        else:
+            settings_admin_button.place_forget()
+
 
 
 
