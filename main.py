@@ -1,17 +1,20 @@
 import handler as h
 import tkinter as tk
 
-h.init_db("pptd")
 root = h.init_root()
 defaultbg = root.cget("bg")
 
 framesList = ["cover", "login", "signup", "home", "tutorials", "manual", "settings", "interfaces", "networks",
-              "webpages", "admin_settings", "view_users"]
+              "webpages", "admin_settings", "view_users", "home_tutorial", "interfaces_tutorial", "networks_tutorial",
+              "webpages_tutorial", "wifi_monitor_tutorial", "settings_tutorial", "admin_settings_tutorial",
+              "users_tutorial", "reset_password"]
 
 imagesList = ["coverLogo.png", "emailIcon.png", "facebook.png", "homeIcon.png", "leftArrow.png", "linkedin.png",
               "loginLogo.png", "logoutIcon.png", "manualIcon.png", "passwordIcon.png", "confirmPasswordIcon.png",
               "rightArrow.png", "settingsIcon.png", "signupIcon.png", "toolIcon.png", "tutorialIcon.png", "twitter.png",
-              "firstNameIcon.png", "lastNameIcon.png", "tutorialsTestResized.png", "back.png", "waiting.gif"]
+              "firstNameIcon.png", "lastNameIcon.png", "back.png", "homeTutorial.png", "interfacesTutorial.png",
+              "networksTutorial.png", "webpagesTutorial.png", "wifiMonitorTutorial.png", "settingsTutorial.png",
+              "adminSettingsTutorial.png", "usersTutorial.png", "forward.png"]
 
 
 images = h.init_images(imagesList)
@@ -111,7 +114,14 @@ for name, page in pages.items():
                                                                                 pages["signup"]["frame"],
                                                                                 "Sign up", root))
         button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
-        canvas.create_window(240, 570, window=button_login_signup)
+        canvas.create_window(240, 550, window=button_login_signup)
+
+        button_login_reset = tk.Button(canvas, text='Reset Password', borderwidth=0, font='times 12 underline',
+                                       fg='#00ACD8', command=lambda: h.show_frame(pages["login"]["frame"],
+                                                                                  pages["reset_password"]["frame"],
+                                                                                  "Contact us", root))
+        button_login_reset.configure(width=10, height=2, activebackground=defaultbg)
+        canvas.create_window(240, 590, window=button_login_reset)
 
         button_fb = tk.Button(canvas, image=images["facebook"], borderwidth=0,
                               command=h.open_facebook)  # Tool button
@@ -128,11 +138,17 @@ for name, page in pages.items():
 
         canvas.pack()
 
+    elif name == "reset_password":
+
+        label_contact_us = tk.Label(canvas, text="To reset your password, please contact us on:\n"
+                                                 "Email:pptd.help@gmail.com\n"
+                                                 "Phone Number: 00962792839589")
+
     elif name == "home":
 
         button_tutorial = tk.Button(canvas, image=images["tutorialIcon"], borderwidth=0,
-                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["tutorials"]["frame"],
-                                                                 "Tutorials", root))  # Tutorial button
+                                    command=lambda: h.show_frame(pages["home"]["frame"], pages["home_tutorial"]["frame"],
+                                                                 "Home Tutorial", root))  # Tutorials button
         button_tutorial.config(activebackground=defaultbg)
         canvas.create_window(125, 160, window=button_tutorial, height=200, width=200)  # Tutorial button postion
 
@@ -218,19 +234,221 @@ for name, page in pages.items():
 
         canvas.pack()
 
-    elif name == "tutorials":
+    elif name == "home_tutorial":
 
-        canvas.create_image(240, 110, image=images["tutorialsTestResized"])
-        canvas.create_text(10, 250, text="Image Description Here", anchor="w")
+        canvas.create_image(238, 350, image=images["homeTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                            command=lambda: h.show_frame(pages["home_tutorial"]["frame"],
+                                                 pages["interfaces_tutorial"]["frame"],
+                                                 "Interfaces Tutorial", root))
+        canvas.create_window(428, 350, window=button_forward, height=90, width=90)
 
         button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
-                                          command=lambda: h.show_frame(pages["tutorials"]["frame"],
+                                          command=lambda: h.show_frame(pages["home_tutorial"]["frame"],
                                                                        pages["home"]["frame"], "Home", root))
         button_home_tutorials.config(activebackground=defaultbg)
         canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
 
         button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
-                                  command=lambda: h.logout((pages["tutorials"]["frame"], pages["login"]["frame"],
+                                  command=lambda: h.logout((pages["home_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "interfaces_tutorial":
+
+        canvas.create_image(238, 350, image=images["interfacesTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                                   command=lambda: h.show_frame(pages["interfaces_tutorial"]["frame"],
+                                                        pages["networks_tutorial"]["frame"],
+                                                        "Networks Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["interfaces_tutorial"]["frame"],
+                                                     pages["home_tutorial"]["frame"],
+                                                     "Home Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["interfaces_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["interfaces_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "networks_tutorial":
+
+        canvas.create_image(238, 350, image=images["networksTutorial"],anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                                   command=lambda: h.show_frame(pages["networks_tutorial"]["frame"],
+                                                        pages["webpages_tutorial"]["frame"],
+                                                        "Web Pages Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["networks_tutorial"]["frame"],
+                                                     pages["interfaces_tutorial"]["frame"],
+                                                     "Interfaces Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["networks_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["networks_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "webpages_tutorial":
+
+        canvas.create_image(238, 350, image=images["webpagesTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                                   command=lambda: h.show_frame(pages["webpages_tutorial"]["frame"],
+                                                        pages["wifi_monitor_tutorial"]["frame"],
+                                                        "Wifi Monitor Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["webpages_tutorial"]["frame"],
+                                                     pages["networks_tutorial"]["frame"],
+                                                     "Networks Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["webpages_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["webpages_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "wifi_monitor_tutorial":
+
+        canvas.create_image(238, 350, image=images["wifiMonitorTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                                   command=lambda: h.show_frame(pages["wifi_monitor_tutorial"]["frame"],
+                                                        pages["settings_tutorial"]["frame"],
+                                                        "Settings Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["wifi_monitor_tutorial"]["frame"],
+                                                     pages["webpages_tutorial"]["frame"],
+                                                     "Web Pages Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["wifi_monitor_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["wifi_monitor_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "settings_tutorial":
+
+        canvas.create_image(238, 350, image=images["settingsTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"], borderwidth=0,
+                                   command=lambda: h.show_frame(pages["settings_tutorial"]["frame"],
+                                                        pages["admin_settings_tutorial"]["frame"],
+                                                        "Admin Settings Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["settings_tutorial"]["frame"],
+                                                     pages["wifi_monitor_tutorial"]["frame"],
+                                                     "Wifi Monitor Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["settings_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["settings_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "admin_settings_tutorial":
+
+        canvas.create_image(238, 350, image=images["adminSettingsTutorial"], anchor="center")
+
+        button_forward = tk.Button(canvas, image=images["forward"],
+                                   command=lambda: h.show_frame(pages["admin_settings_tutorial"]["frame"],
+                                                        pages["users_tutorial"]["frame"],
+                                                        "Users Tutorial", root))
+        canvas.create_window(420, 350, window=button_forward, height=90, width=90)
+
+        button_back = tk.Button(canvas, image=images["back"],
+                                command=lambda: h.show_frame(pages["admin_settings_tutorial"]["frame"],
+                                                     pages["settings_tutorial"]["frame"],
+                                                     "Settings Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["admin_settings_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["admin_settings_tutorial"]["frame"], pages["login"]["frame"],
+                                                            "Login", root)))  # logout button
+        button_logout.config(activebackground=defaultbg)
+        canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
+        canvas.pack()
+
+    elif name == "users_tutorial":
+
+        canvas.create_image(238, 350, image=images["usersTutorial"], anchor="center")
+
+        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["users_tutorial"]["frame"],
+                                                     pages["admin_settings_tutorial"]["frame"],
+                                                     "Admin Settings Tutorial", root))
+        canvas.create_window(30, 350, window=button_back, height=90, width=90)
+
+        button_home_tutorials = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
+                                          command=lambda: h.show_frame(pages["users_tutorial"]["frame"],
+                                                                       pages["home"]["frame"], "Home", root))
+        button_home_tutorials.config(activebackground=defaultbg)
+        canvas.create_window(10, 720, window=button_home_tutorials, height=90, width=90, anchor="sw")
+
+        button_logout = tk.Button(canvas, image=images["logoutIcon"], borderwidth=0,
+                                  command=lambda: h.logout((pages["users_tutorial"]["frame"], pages["login"]["frame"],
                                                             "Login", root)))  # logout button
         button_logout.config(activebackground=defaultbg)
         canvas.create_window(466, 720, window=button_logout, height=90, width=90, anchor="se")
@@ -326,15 +544,20 @@ for name, page in pages.items():
         new_org_password_entry = tk.Entry(join_organization_section, show="*", width=30)
         new_org_password_entry.place(anchor="w", x=12, y=110)
 
-        settings_error_label = tk.Label(canvas)
-        settings_error_label.place(anchor="w", x=10, y=550)
+        settings_error_label = tk.Label(canvas, text="asd", font="times 12", fg="red")
+        settings_error_label.place(anchor="center", x=238, y=550)
 
         # ==================================================================================================
 
         entries = (current_password_entry, new_password_entry, confirm_new_password_entry, org_name_entry,
                    new_org_password_entry)
 
-        button_apply = tk.Button(canvas, text="Apply", command=lambda: h.update_info(settings_error_label, entries))
+        settings_apply_navigation = (pages["settings"]["frame"],
+                                     pages["settings"]["frame"],
+                                     "Settings", root)
+
+        button_apply = tk.Button(canvas, text="Apply", command=lambda: h.update_info(settings_error_label, entries,
+                                                                                     settings_apply_navigation))
         button_apply.config(width=10, height=2)
         canvas.create_window(238, 600, window=button_apply)
 
@@ -393,6 +616,9 @@ for name, page in pages.items():
 
         # ===========================================================================================
 
+        admin_settings_error_label = tk.Label(canvas, text="asd", font="times 12", fg="red")
+        admin_settings_error_label.place(anchor="center", x=238, y=510)
+
         button_apply_admin = tk.Button(canvas, text="Apply")
         button_apply_admin.config(width=10, height=2)
         canvas.create_window(235, 600, window=button_apply_admin)
@@ -418,7 +644,6 @@ for name, page in pages.items():
 
                                   command=lambda: h.show_frame(pages["admin_settings"]["frame"],
                                                                pages["login"]["frame"],
-
                                                                "Login", root))  # logout button
 
         button_logout.config(activebackground=defaultbg)
