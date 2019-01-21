@@ -564,14 +564,14 @@ for name, page in pages.items():
 
         # ==================================================================================================
 
-        entries = (current_password_entry, new_password_entry, confirm_new_password_entry, org_name_entry,
+        settings_entries = (current_password_entry, new_password_entry, confirm_new_password_entry, org_name_entry,
                    new_org_password_entry)
 
         settings_apply_navigation = (pages["settings"]["frame"],
                                      pages["settings"]["frame"],
                                      "Settings", root)
 
-        button_apply = tk.Button(canvas, text="Apply", command=lambda: h.update_info(settings_error_label, entries,
+        button_apply = tk.Button(canvas, text="Apply", command=lambda: h.update_info(settings_error_label, settings_entries,
                                                                                      settings_apply_navigation))
         button_apply.config(width=10, height=2)
         canvas.create_window(238, 600, window=button_apply)
