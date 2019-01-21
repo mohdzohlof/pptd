@@ -141,8 +141,17 @@ for name, page in pages.items():
     elif name == "reset_password":
 
         label_contact_us = tk.Label(canvas, text="To reset your password, please contact us on:\n"
-                                                 "Email:pptd.help@gmail.com\n"
-                                                 "Phone Number: 00962792839589")
+                                                 "pptd.help@gmail.com", font="times 14")
+        label_contact_us.place(x=238, y=370, anchor="center")
+
+        button_back_reset_password = tk.Button(canvas, image=images["back"], borderwidth=0,
+                                command=lambda: h.show_frame(pages["reset_password"]["frame"], pages["login"]["frame"],
+                                                             "Login", root))
+
+        button_back_reset_password.config(activebackground=defaultbg)
+        canvas.create_window(50, 50, window=button_back_reset_password, height=90, width=90)
+
+        canvas.pack()
 
     elif name == "home":
 
@@ -184,55 +193,55 @@ for name, page in pages.items():
 
         canvas.pack()
 
-    elif name == "signup":
-
-        button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
-                                command=lambda: h.show_frame(pages["signup"]["frame"], pages["login"]["frame"],
-                                                             "Login", root))
-
-        button_back.config(activebackground=defaultbg)
-        canvas.create_window(50, 50, window=button_back, height=90, width=90)
-
-        signup_label_error = tk.Label(canvas, font='times 12', fg='red')
-        signup_label_error.place(x=238, y=640, anchor="center")
-        canvas.create_image(240, 100, image=images["signupIcon"], anchor="center")
-        canvas.create_image(85, 230, image=images["firstNameIcon"], anchor="center")
-        canvas.create_image(85, 320, image=images["lastNameIcon"], anchor="center")
-        canvas.create_image(85, 410, image=images["emailIcon"], anchor="center")
-        canvas.create_image(85, 500, image=images["passwordIcon"], anchor="center")
-        canvas.create_image(85, 590, image=images["confirmPasswordIcon"], anchor="center")
-
-        canvas.create_text((125, 205), anchor="w", text='First Name', font='times 14 bold', fill='#4D4D4D')
-        canvas.create_text((125, 295), anchor="w", text='Last Name', font='times 14 bold', fill='#4D4D4D')
-        canvas.create_text((125, 385), anchor="w", text='Email', font='times 14 bold', fill='#4D4D4D')
-        canvas.create_text((125, 475), anchor="w", text='Password', font='times 14 bold', fill='#4D4D4D')
-        canvas.create_text((125, 565), anchor="w", text='Confirm Password', font='times 14 bold', fill='#4D4D4D')
-
-        firstNameEntry = tk.Entry(canvas)
-        canvas.create_window(125, 232, window=firstNameEntry, height=30, width=300, anchor="w")
-
-        lastNameEntry = tk.Entry(canvas)
-        canvas.create_window(125, 322, window=lastNameEntry, height=30, width=300, anchor="w")
-
-        emailEntry = tk.Entry(canvas)
-        canvas.create_window(125, 412, window=emailEntry, height=30, width=300, anchor="w")
-
-        passwordEntry = tk.Entry(canvas, show="*")
-        canvas.create_window(125, 502, window=passwordEntry, height=30, width=300, anchor="w")
-
-        confirmPasswordEntry = tk.Entry(canvas, show="*")
-        canvas.create_window(125, 592, window=confirmPasswordEntry, height=30, width=300, anchor="w")
-
-        button_signup = tk.Button(canvas,
-                                  text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8',
-                                  command=lambda: h.signup(
-                                      signup_label_error,
-                                      (firstNameEntry, lastNameEntry, emailEntry, passwordEntry, confirmPasswordEntry),
-                                      (pages["signup"], pages["login"], "Login", root)))
-        button_signup.configure(width=10, height=2)
-        canvas.create_window(238, 690, window=button_signup, anchor="center")
-
-        canvas.pack()
+    # elif name == "signup":
+    #
+    #     button_back = tk.Button(canvas, image=images["back"], borderwidth=0,
+    #                             command=lambda: h.show_frame(pages["signup"]["frame"], pages["login"]["frame"],
+    #                                                          "Login", root))
+    #
+    #     button_back.config(activebackground=defaultbg)
+    #     canvas.create_window(50, 50, window=button_back, height=90, width=90)
+    #
+    #     signup_label_error = tk.Label(canvas, font='times 12', fg='red')
+    #     signup_label_error.place(x=238, y=640, anchor="center")
+    #     canvas.create_image(240, 100, image=images["signupIcon"], anchor="center")
+    #     canvas.create_image(85, 230, image=images["firstNameIcon"], anchor="center")
+    #     canvas.create_image(85, 320, image=images["lastNameIcon"], anchor="center")
+    #     canvas.create_image(85, 410, image=images["emailIcon"], anchor="center")
+    #     canvas.create_image(85, 500, image=images["passwordIcon"], anchor="center")
+    #     canvas.create_image(85, 590, image=images["confirmPasswordIcon"], anchor="center")
+    #
+    #     canvas.create_text((125, 205), anchor="w", text='First Name', font='times 14 bold', fill='#4D4D4D')
+    #     canvas.create_text((125, 295), anchor="w", text='Last Name', font='times 14 bold', fill='#4D4D4D')
+    #     canvas.create_text((125, 385), anchor="w", text='Email', font='times 14 bold', fill='#4D4D4D')
+    #     canvas.create_text((125, 475), anchor="w", text='Password', font='times 14 bold', fill='#4D4D4D')
+    #     canvas.create_text((125, 565), anchor="w", text='Confirm Password', font='times 14 bold', fill='#4D4D4D')
+    #
+    #     firstNameEntry = tk.Entry(canvas)
+    #     canvas.create_window(125, 232, window=firstNameEntry, height=30, width=300, anchor="w")
+    #
+    #     lastNameEntry = tk.Entry(canvas)
+    #     canvas.create_window(125, 322, window=lastNameEntry, height=30, width=300, anchor="w")
+    #
+    #     emailEntry = tk.Entry(canvas)
+    #     canvas.create_window(125, 412, window=emailEntry, height=30, width=300, anchor="w")
+    #
+    #     passwordEntry = tk.Entry(canvas, show="*")
+    #     canvas.create_window(125, 502, window=passwordEntry, height=30, width=300, anchor="w")
+    #
+    #     confirmPasswordEntry = tk.Entry(canvas, show="*")
+    #     canvas.create_window(125, 592, window=confirmPasswordEntry, height=30, width=300, anchor="w")
+    #
+    #     button_signup = tk.Button(canvas,
+    #                               text="Sign up", font='times 12 bold', bg="#243746", fg='#00acd8',
+    #                               command=lambda: h.signup(
+    #                                   signup_label_error,
+    #                                   (firstNameEntry, lastNameEntry, emailEntry, passwordEntry, confirmPasswordEntry),
+    #                                   (pages["signup"], pages["login"], "Login", root)))
+    #     button_signup.configure(width=10, height=2)
+    #     canvas.create_window(238, 690, window=button_signup, anchor="center")
+    #
+    #     canvas.pack()
 
     elif name == "home_tutorial":
 
