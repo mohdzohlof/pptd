@@ -4,7 +4,7 @@ conn = None
 cur = None
 
 
-def init_db(db, host="localhost", user="root", passw=""):
+def init_db(db="pptd", host="localhost", user="root", passw=""):
     global conn, cur
     conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
     cur = conn.cursor()
@@ -18,17 +18,20 @@ def create_user(email, password, first_name, last_name):
     cur.execute(query)
 
     conn.commit()
+    conn.close()
+    init_db()
 
 
 def get_user(email, passw):
     query = "SELECT email FROM account WHERE email='{}' AND password='{}'".format(email, passw)
 
-    res = cur.execute(query)
+    cur.execute(query)
 
+    res = cur.fetchone()
     if res is None:
         return None
     else:
-        return cur.fetchone()[0]
+        return res[0]
 
 
 def get_users_by_org(org_id):
@@ -93,6 +96,8 @@ def update_password(email, password):
     cur.execute(query)
 
     conn.commit()
+    conn.close()
+    init_db()
 
 
 def update_organization(email, org_id):
@@ -101,6 +106,8 @@ def update_organization(email, org_id):
     cur.execute(query)
 
     conn.commit()
+    conn.close()
+    init_db()
 
 
 def update_org_password(org_id, password):
@@ -109,6 +116,8 @@ def update_org_password(org_id, password):
     cur.execute(query)
 
     conn.commit()
+    conn.close()
+    init_db()
 
 
 def remove_user_org(email):
@@ -117,3 +126,5 @@ def remove_user_org(email):
     cur.execute(query)
 
     conn.commit()
+    conn.close()
+    init_db()
