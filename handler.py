@@ -1,19 +1,18 @@
 from flux import fluxion
 import tkinter as tk
 from PIL import ImageTk
-import MySQLdb
 import webbrowser
 from validate_email import validate_email
 import threading
 from queue import Queue
+import db
+
 
 assets_path = "assets/"
-conn = None
 user = None
 interfaces = None
 networks = None
 webpages = None
-admin = False
 interface_label_scan = None
 network_label_scan = None
 found = False
@@ -21,47 +20,49 @@ found = False
 q = None
 
 
-def get_user_info():
-    cur = conn.cursor()
-
-    query = "SELECT password, admin, org_id FROM account WHERE email = {email}".format(email=user)
-    cur.execute(query)
-
-    return cur.fetchone()
-
-
-def get_org_info(org_id):
-    cur = conn.cursor()
-
-    query = "SELECT name, password FROM organization WHERE id = {id}".format(id=org_id)
-
-    cur.execute(query)
-
-    return cur.fetchone()
-
-
-def update_info(settings_error_label, entries):
+def update_info(settings_error_label, entries, navigation):
+    updated = False
     current_password = entries[0].get()
     new_password = entries[1].get()
     confirm_new_password = entries[2].get()
     org_name = entries[3].get()
     org_pass = entries[4].get()
 
-    user_info = get_user_info()
-    password = user_info[0]
-    org_id = user_info[2]
-    admin = False
-    if user_info[1] != 0:
-        admin = True
-
-    org_info = get_org_info(org_id)
+    password = db.get_password(user)
 
     if current_password != password:
         settings_error_label.configure(text="Invalid password!")
         return
-    elif new_password != confirm_new_password:
-        settings_error_label.configure(text="Passwords do not match!")
-        return
+
+    if len(new_password) > 0 or len(confirm_new_password) > 0:
+        if new_password != confirm_new_password:
+            settings_error_label.configure(text="Passwords do not match!")
+            return
+        elif not password_is_valid(new_password):
+            settings_error_label.configure(text="Password must contain upper case letter, lower case letter and a number")
+            return
+        else:
+            db.update_password(user, new_password)
+            updated = True
+    else:
+        settings_error_label.configure(text="")
+
+    if len(org_name) > 0 or len(org_pass) > 0:
+        org_info = db.get_org_by_name(org_name)
+        print(org_info)
+        if org_name != org_info[1]:
+            settings_error_label.configure(text="Organization does not exist!")
+        elif org_pass != org_info[2]:
+            settings_error_label.configure(text="Invalid organization password")
+        else:
+            updated = True
+            db.update_organization(user, org_info[0])
+    else:
+        settings_error_label.configure(text="")
+
+    if updated:
+        show_frame(navigation[0], navigation[1], navigation[2], navigation[3])
+        settings_error_label.configure(text="updated successfully")
 
 
 def scanning(label, root):
@@ -148,11 +149,8 @@ def has_upper(input_string):
     return any(char.isupper() for char in input_string)
 
 
-def set_globals(connection=None, username=None, interface=None, network=None, access=None, webpage=None):
-    global conn, user, interfaces, networks, admin, webpages
-
-    if connection is not None:
-        conn = connection
+def set_globals(username=None, interface=None, network=None, access=None, webpage=None):
+    global user, interfaces, networks, admin, webpages
 
     if username is not None:
         user = username
@@ -314,8 +312,7 @@ def run_tool(f):
 
 
 def signup(error, entries, navigation):
-    global conn
-    cur = conn.cursor()
+    cur = db.conn.cursor()
     first_name = entries[0].get()
     last_name = entries[1].get()
     email = entries[2].get()
@@ -344,7 +341,7 @@ def signup(error, entries, navigation):
         valid = False
         return
 
-    if not (has_upper(password) and has_lower(password) and has_digit(password) and 10 <= len(password) <= 25):
+    if not password_is_valid(password):
         error.configure(text="Password must contain upper case letter, lower case letter and a number")
         valid = False
         return
@@ -356,12 +353,14 @@ def signup(error, entries, navigation):
 
     if valid:
         error.configure(text="")
-        query = "INSERT INTO account (email, password, admin, first_name, last_name) " \
-                "VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')"\
-            .format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
+        query = "INSERT INTO account (email, password, admin, first_name, last_name) VALUES ('{email}', '{password}', {admin}, '{first_name}', '{last_name}')".format(email=email, password=password, admin=0, first_name=first_name, last_name=last_name)
         cur.execute(query)
-        conn.commit()
+        db.conn.commit()
         show_frame(current_frame, next_frame, window_name, root)
+
+
+def password_is_valid(password):
+    return has_upper(password) and has_lower(password) and has_digit(password) and 10 <= len(password) <= 25
 
 
 def select_all(e):
@@ -371,14 +370,13 @@ def select_all(e):
 
 
 def logout(f):
-    global user, admin
+    global user
     current_frame = f[0]
     next_frame = f[1]
     root_name = f[2]
     root = f[3]
 
     user = None
-    admin = None
 
     show_frame(current_frame, next_frame, root_name, root)
 
@@ -402,22 +400,21 @@ def login(email_entry, password_entry, navigation):
 
 
 def authenticate(email_entry, password_entry):
+    global user
+    cur = db.conn.cursor()
+
     email = email_entry.get()
     passw = password_entry.get()
-    global conn, user, admin
-
-    cur = conn.cursor()
 
     query = "SELECT email, admin FROM account WHERE email='{}' AND password='{}'".format(email, passw)
     cur.execute(query)
     res = cur.fetchone()
     if res is not None:
         user = res[0]
-        if res[1] != 0:
-            admin = True
 
 
 def init_root(title="Cover", size="476x730", resizeable_height=False, resizeable_width=False):
+    db.init_db("pptd")
     root = tk.Tk()
     root.title(title)
     root.geometry(size)
@@ -475,11 +472,6 @@ def construct_file(x):
     return x.format(assets_path)
 
 
-def init_db(db, host="localhost", user="root", passw=""):
-    global conn
-    conn = MySQLdb.connect(host=host, user=user, passwd=passw, db=db)
-
-
 def show_frame(current_frame, frame, title, root):
     root.title(title)
     current_frame.pack_forget()
@@ -516,4 +508,43 @@ def show_frame(current_frame, frame, title, root):
         webpages_error_label.place_forget()
         webpages_confirm_button.configure(state="normal")
         webpages_exit_button.configure(state="disabled")
-    # elif title == "Settings":
+    elif title == "Settings":
+        admin = db.is_admin(user)
+        org_id = db.get_org_id(user)
+
+        c = frame.winfo_children()[0]
+        settings_pass_entry = c.winfo_children()[1]
+        settings_pass_labelframe = c.winfo_children()[2]
+        settings_org_labelframe = c.winfo_children()[3]
+        settings_error_label = c.winfo_children()[4]
+
+        settings_new_pass_entry = settings_pass_labelframe.winfo_children()[1]
+        settings_confirm_pass_entry = settings_pass_labelframe.winfo_children()[3]
+
+        settings_org_name_label = settings_org_labelframe.winfo_children()[0]
+        settings_org_name_entry = settings_org_labelframe.winfo_children()[1]
+        settings_org_pass_label = settings_org_labelframe.winfo_children()[2]
+        settings_org_pass_entry = settings_org_labelframe.winfo_children()[3]
+
+        settings_pass_entry.focus()
+        settings_pass_entry.delete(0, "end")
+        settings_new_pass_entry.delete(0, "end")
+        settings_confirm_pass_entry.delete(0, "end")
+        settings_org_name_entry.delete(0, "end")
+        settings_org_pass_entry.delete(0, "end")
+
+        settings_error_label.configure(text="")
+
+        if org_id is not None or admin:
+            settings_org_name_label.configure(state="disabled")
+            settings_org_name_entry.configure(state="disabled")
+            settings_org_pass_label.configure(state="disabled")
+            settings_org_pass_entry.configure(state="disabled")
+        else:
+            settings_org_name_label.configure(state="normal")
+            settings_org_name_entry.configure(state="normal")
+            settings_org_pass_label.configure(state="normal")
+            settings_org_pass_entry.configure(state="normal")
+
+
+
