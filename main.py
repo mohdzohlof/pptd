@@ -120,27 +120,27 @@ for name, page in pages.items():
                                                                                 pages["signup"]["frame"],
                                                                                 "Sign up", root))
         button_login_signup.configure(width=10, height=2, activebackground=defaultbg)
-        canvas.create_window(240, 550, window=button_login_signup)
+        canvas.create_window(240, 560, window=button_login_signup)
 
         button_login_reset = tk.Button(canvas, text='Reset Password', borderwidth=0, font='times 12 underline',
                                        fg='#00ACD8', command=lambda: h.show_frame(pages["login"]["frame"],
                                                                                   pages["reset_password"]["frame"],
                                                                                   "Contact us", root))
         button_login_reset.configure(width=10, height=2, activebackground=defaultbg)
-        canvas.create_window(240, 590, window=button_login_reset)
+        canvas.create_window(240, 600, window=button_login_reset)
 
         button_fb = tk.Button(canvas, image=images["facebook"], borderwidth=0,
                               command=h.open_facebook)  # Tool button
         button_fb.config(activebackground=defaultbg)
-        canvas.create_window(92.5, 650, window=button_fb)  # Facebook button position
+        canvas.create_window(92.5, 670, window=button_fb)  # Facebook button position
 
         button_linkedIn = tk.Button(canvas, image=images["linkedin"], borderwidth=0, command=h.open_linkedin)
         button_linkedIn.config(activebackground=defaultbg)
-        canvas.create_window(230, 650, window=button_linkedIn)  # Linkedin button position
+        canvas.create_window(230, 670, window=button_linkedIn)  # Linkedin button position
 
         button_twitter = tk.Button(canvas, image=images["twitter"], borderwidth=0, command=h.open_twitter)
         button_twitter.config(activebackground=defaultbg)
-        canvas.create_window(367.5, 650, window=button_twitter)  # Twitter button position
+        canvas.create_window(367.5, 670, window=button_twitter)  # Twitter button position
 
         canvas.pack()
 
@@ -580,7 +580,7 @@ for name, page in pages.items():
         current_password_entry.place(anchor="w", x=180, y=130)
 
         join_organization_section = tk.LabelFrame(canvas, text="Change Organization Password", height=170, width=300)
-        join_organization_section.place(x=238, y=350, anchor="center")
+        join_organization_section.place(x=238, y=320, anchor="center")
 
         new_org_pass_label = tk.Label(join_organization_section, text="New Organization Password")
         new_org_pass_label.place(anchor="w", x=10, y=30)
@@ -597,23 +597,25 @@ for name, page in pages.items():
         # ===========================================================================================
 
         settings_admin_error_label = tk.Label(canvas, font="times 12", fg="red")
-        settings_admin_error_label.place(anchor="center", x=238, y=510)
+        settings_admin_error_label.place(anchor="center", x=238, y=462)
 
         entries = (current_password_entry, org_pass_entry, confirm_new_org_pass_entry)
         settings_admin_apply_navigation = (pages["admin_settings"]["frame"],
                                                               pages["admin_settings"]["frame"],
                                                               "Admin Settings", root)
 
-        button_apply_admin = tk.Button(canvas, text="Apply", command=lambda: h.change_org_password(settings_admin_error_label, entries, settings_admin_apply_navigation))
+        button_apply_admin = tk.Button(canvas, text="Apply",
+                                       command=lambda: h.change_org_password(settings_admin_error_label,
+                                                                             entries, settings_admin_apply_navigation))
         button_apply_admin.config(width=10, height=2)
-        canvas.create_window(235, 600, window=button_apply_admin)
+        canvas.create_window(235, 550, window=button_apply_admin)
 
         button_users = tk.Button(canvas, text="Users",
                                  command=lambda: h.show_frame(pages["admin_settings"]["frame"],
                                                               pages["view_users"]["frame"],
                                                               "Users", root))
         button_users.config(width=10, height=2)
-        canvas.create_window(235, 650, window=button_users)
+        canvas.create_window(235, 600, window=button_users)
 
         button_home_settings = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
 
