@@ -49,7 +49,6 @@ def update_info(settings_error_label, entries, navigation):
 
     if len(org_name) > 0 or len(org_pass) > 0:
         org_info = db.get_org_by_name(org_name)
-        print(org_info)
         if org_name != org_info[1]:
             settings_error_label.configure(text="Organization does not exist!")
         elif org_pass != org_info[2]:
