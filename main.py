@@ -1,8 +1,6 @@
 import handler as h
 import tkinter as tk
 
-
-#test
 h.init_db("pptd")
 root = h.init_root()
 defaultbg = root.cget("bg")
