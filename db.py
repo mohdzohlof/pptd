@@ -23,9 +23,12 @@ def create_user(email, password, first_name, last_name):
 def get_user(email, passw):
     query = "SELECT email FROM account WHERE email='{}' AND password='{}'".format(email, passw)
 
-    cur.execute(query)
+    res = cur.execute(query)
 
-    return cur.fetchone()[0]
+    if res is None:
+        return None
+    else:
+        return cur.fetchone()[0]
 
 
 def get_users_by_org(org_id):
