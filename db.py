@@ -18,8 +18,6 @@ def create_user(email, password, first_name, last_name):
     cur.execute(query)
 
     conn.commit()
-    conn.close()
-    init_db()
 
 
 def get_user(email, passw):
@@ -96,8 +94,6 @@ def update_password(email, password):
     cur.execute(query)
 
     conn.commit()
-    conn.close()
-    init_db()
 
 
 def update_organization(email, org_id):
@@ -106,8 +102,6 @@ def update_organization(email, org_id):
     cur.execute(query)
 
     conn.commit()
-    conn.close()
-    init_db()
 
 
 def update_org_password(org_id, password):
@@ -116,8 +110,6 @@ def update_org_password(org_id, password):
     cur.execute(query)
 
     conn.commit()
-    conn.close()
-    init_db()
 
 
 def remove_user_org(email):
@@ -126,5 +118,3 @@ def remove_user_org(email):
     cur.execute(query)
 
     conn.commit()
-    conn.close()
-    init_db()
