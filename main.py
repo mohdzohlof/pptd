@@ -601,8 +601,8 @@ for name, page in pages.items():
 
         entries = (current_password_entry, org_pass_entry, confirm_new_org_pass_entry)
         settings_admin_apply_navigation = (pages["admin_settings"]["frame"],
-                                                              pages["admin_settings"]["frame"],
-                                                              "Admin Settings", root)
+                                           pages["admin_settings"]["frame"],
+                                           "Admin Settings", root)
 
         button_apply_admin = tk.Button(canvas, text="Apply",
                                        command=lambda: h.change_org_password(settings_admin_error_label,
