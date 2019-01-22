@@ -542,12 +542,12 @@ for name, page in pages.items():
         canvas.create_window(238, 600, window=button_apply)
 
         button_admin_settings = tk.Button(canvas, text="Admin Settings",
-
                                           command=lambda: h.show_frame(pages["settings"]["frame"],
                                                                        pages["admin_settings"]["frame"],
                                                                        "Admin Settings", root))
         button_admin_settings.config(width=15, height=2)
         canvas.create_window(238, 650, window=button_admin_settings)
+        button_admin_settings.place(x=238, y=650, anchor="center")
 
         button_home_settings = tk.Button(canvas, image=images["homeIcon"], borderwidth=0,
                                          command=lambda: h.show_frame(pages["settings"]["frame"],

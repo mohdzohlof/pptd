@@ -109,7 +109,7 @@ def update_info(settings_error_label, entries, navigation):
 
     if len(org_name) > 0 or len(org_pass) > 0:
         org_info = db.get_org_by_name(org_name)
-        if org_name != org_info[1]:
+        if org_info is None:
             settings_error_label.configure(text="Organization does not exist!")
         elif org_pass != org_info[2]:
             settings_error_label.configure(text="Invalid organization password")
@@ -458,6 +458,8 @@ def authenticate(email_entry, password_entry):
     res = db.get_user(email, passw)
     if res is not None:
         user = res
+    else:
+        user = None
 
 
 def init_root(title="Cover", size="476x730", resizeable_height=False, resizeable_width=False):
